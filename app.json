@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "KentiminKarti",
+    "slug": "KentiminKarti",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "KentiminKarti"
+}
