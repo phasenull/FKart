@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "KentiminKarti.app"
-               BlueprintName = "KentiminKarti"
-               ReferencedContainer = "container:KentiminKarti.xcodeproj">
+               BuildableName = "KentiminKartı.app"
+               BlueprintName = "KentiminKartı"
+               ReferencedContainer = "container:KentiminKartı.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "KentiminKartiTests.xctest"
-               BlueprintName = "KentiminKartiTests"
-               ReferencedContainer = "container:KentiminKarti.xcodeproj">
+               BuildableName = "KentiminKartıTests.xctest"
+               BlueprintName = "KentiminKartıTests"
+               ReferencedContainer = "container:KentiminKartı.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "KentiminKarti.app"
-            BlueprintName = "KentiminKarti"
-            ReferencedContainer = "container:KentiminKarti.xcodeproj">
+            BuildableName = "KentiminKartı.app"
+            BlueprintName = "KentiminKartı"
+            ReferencedContainer = "container:KentiminKartı.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "KentiminKarti.app"
-            BlueprintName = "KentiminKarti"
-            ReferencedContainer = "container:KentiminKarti.xcodeproj">
+            BuildableName = "KentiminKartı.app"
+            BlueprintName = "KentiminKartı"
+            ReferencedContainer = "container:KentiminKartı.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
