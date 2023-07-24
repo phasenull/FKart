@@ -1,11 +1,12 @@
 {
   "expo": {
-    "name": "Kentimin Kartı",
-    "slug": "Kentimin Kartı",
+    "name": "KentiminKarti",
+    "slug": "KentiminKarti",
+    "userInterfaceStyle": "automatic",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
     ]
   },
-  "name": "Kentimin Kartı"
+  "name": "KentiminKarti"
 }
