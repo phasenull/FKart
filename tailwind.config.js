@@ -9,9 +9,11 @@ module.exports = {
 				primary: "#2d86fa",
 				secondary: "#fff",
 				accent: "#82b8ff",
+				"accent-light":"#aeccf2",
 				"primary-dark": "#190045",
 				"secondary-dark": "#000",
 				"accent-dark": "#300182",
+				"accent-light-dark": "#4c15ad",
 			}
 		},
 	},

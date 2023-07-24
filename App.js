@@ -9,7 +9,7 @@ export default function App() {
 			<Stack.Navigator>
 				<Stack.Screen name="Login" component={LoginPage} options={{ headerShown:false}} />
 				<Stack.Screen name="Register" component={LoginPage} options={{ headerShown:false}} />
-				<Stack.Screen name="Profile" component={LoginPage} />
+				<Stack.Screen name="Profile" component={LoginPage} options={{ headerShown:false}}/>
 			</Stack.Navigator>
 		</NavigationContainer>
 	)
