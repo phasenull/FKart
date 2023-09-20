@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "KentiminKarti",
-    "slug": "KentiminKarti",
+    "name": "FKart",
+    "slug": "FKart",
     "userInterfaceStyle": "automatic",
     "version": "1.0.1",
     "assetBundlePatterns": [
       "**/*"
     ],
     "android": {
-      "package": "dev.phasenull.KentiminKarti"
+      "package": "undefined"
     }
   },
-  "name": "KentiminKarti"
+  "name": "FKart"
 }
