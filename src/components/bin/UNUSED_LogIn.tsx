@@ -1,16 +1,19 @@
-import { Fragment, useEffect, useState } from "react";
-import { Avatar, Button, Card, Text, TextInput, useTheme } from "react-native-paper";
+import React, { Fragment, useEffect, useState } from "react";
+import { Avatar, Button, Card, HelperText, Text, TextInput, useTheme } from "react-native-paper";
 import { Translated, validate } from "../../util";
 import { useColorScheme } from "nativewind";
-
+import { KentiminKarti } from "../../network/KentiminKarti";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Panel_LogIn(props) {
+	return <Text>Deprecated Component</Text>
+	const {navigation} = props
 	const [data, setData] = useState({
 		email: "",
 		password: ""
 	});
 	const [loading, set_loading] = useState(false);
-	const [errors, set_errors] = useState({
+	const [errors, set_errors] : any = useState({
 	})
 	useEffect(() => {
 		const [email_success, email_error] = validate(data.email, "email");
@@ -19,9 +22,24 @@ export default function Panel_LogIn(props) {
 	}, [data])
 	const [show_password, set_show_password] = useState(false);
 	async function send_data() {
-		set_errors({...errors,email: !data.email && "Please enter an email address", password: !data.password && "Please enter a password"})
+		const empty_errors : {email?,password?} = {}
+		data.email || (empty_errors.email = "Please enter an email address")
+		data.password || (empty_errors.password = "Please enter a password")
+		set_errors({...errors,...empty_errors})
 		if (!validate_fields()) {return}
 		set_loading(true);
+		const App = KentiminKarti;
+		const user = await App.Login(data.email, data.password).then((response)=>{
+			set_loading(false);
+			console.log("response",response)
+			console.log("user",App.GetUser())
+			if (response && App.GetUser()) {
+				navigation.replace("Home")
+			}
+		}).catch((error) => {
+			console.log("LogIn Error:",error);
+			set_loading(false);
+		});
 	}
 	function check_fields() {
 		return data.email && data.password
@@ -34,7 +52,7 @@ export default function Panel_LogIn(props) {
 	}
 	return (
 		<Fragment>
-			<Card.Content className="gap-y-5">
+			<Card.Content>
 				<TextInput
 					label= {`${Translated("email")}`}
 					value={data.email}
@@ -42,8 +60,9 @@ export default function Panel_LogIn(props) {
 					onChangeText={text => setData({ ...data, email: text })}
 					error={errors.email}
 				/>
-				<Text style={{color:useTheme().colors.error}} className={"font-bold ml-3 " +  (errors.email ? "" : "hidden")}>{errors.email ? "- " + errors.email : null}</Text>
+				<HelperText className="ml-3" type="error" visible={errors.email}>{errors.email ? "- " + errors.email : null}</HelperText>
 				<TextInput
+					className="mt-5"
 					secureTextEntry={!show_password}
 					label={`${Translated("password")}`}
 					value={data.password}
@@ -53,7 +72,7 @@ export default function Panel_LogIn(props) {
 					}
 					error={errors.password}
 				/>
-				<Text style={{color:useTheme().colors.error}} className={"font-bold ml-3 " +  (errors.password ? "" : "hidden")}>{errors.password ? "- " + errors.password : null}</Text>
+				<HelperText className="ml-3" type="error" visible={errors.password}>{errors.password ? "- " + errors.password : null}</HelperText>
 			</Card.Content>
 			<Button className="mx-auto mt-5 justify-center" contentStyle={
 				{

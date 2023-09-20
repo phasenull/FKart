@@ -1,4 +1,4 @@
-package com.kentiminkarti;
+package dev.phasenull.KentiminKarti;
 
 import android.app.Application;
 import android.content.res.Configuration;

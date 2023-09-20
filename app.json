@@ -3,10 +3,13 @@
     "name": "KentiminKarti",
     "slug": "KentiminKarti",
     "userInterfaceStyle": "automatic",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "android": {
+      "package": "dev.phasenull.KentiminKarti"
+    }
   },
   "name": "KentiminKarti"
 }

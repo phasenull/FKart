@@ -1,4 +1,5 @@
-const DEFAULT_LANG = "tr"
+import { KentiminKarti } from "./network/KentiminKarti"
+
 export function validate(input, type) {
 	if (!type || !input) return [false, null]
 	switch (type) {
@@ -24,36 +25,24 @@ export function validate(input, type) {
 			return [false, "unknown error"]
 	}
 }
-const _TRANSLATIONS = require(`./assets/lang/${DEFAULT_LANG}.json`)
-if (!_TRANSLATIONS) {
-	throw new Error("Invalid language")
-}
-const TRANSLATIONS: Map<string, string> = _TRANSLATIONS
 export function get_app_name() {
 	return "Kentimin Kartı"
 }
 export function Translated(key: string, language?: String) {
 	key = key.toLowerCase()
-	if (language && language !== DEFAULT_LANG && language !== "") {
-		try {
-			// const _new_TRANSLATIONS = require("./assets/lang/"+language+".json")
-			// if (!_new_TRANSLATIONS) {
-			// 	throw new Error("Invalid language")
-			// }
-			// const new_TRANSLATIONS = _new_TRANSLATIONS
-			// if (!new_TRANSLATIONS[key]) {
-			// 	throw new Error(`Invalid key ${key} in language ${language}`)
-			// }
-		} catch {
-			throw new Error("Invalid language")
-		}
-	}
-	// console.log(`DEBUG/LANGUAGE: ${language || DEFAULT_LANG} ${key} : ${TRANSLATIONS[key]}`)
-	if (!TRANSLATIONS[key]) {
-		throw new Error(`Line 52: Invalid key ${key} in language ${language || DEFAULT_LANG}`)
-	}
-	this.key = key
-	return TRANSLATIONS[key]
-}
+	language = language || KentiminKarti.GET_SETTINGS().language
+	if (!language) throw new Error("Language not set")
 
-console.log(`Setting default language to ${Translated("language_locale")}`)
+	let TRANSLATIONS
+
+	TRANSLATIONS = KentiminKarti.TRANSLATIONS_GET()
+	// console.log("util.tsx:",TRANSLATIONS["language_locale_code"])
+	if (!TRANSLATIONS) throw new Error(`Translation file not found (${language})`)
+	// console.log(`[KentiminKarti/LOG]: Translation of (${key}) is (${TRANSLATIONS[key]}) in language ${language}`)
+	return TRANSLATIONS[key] || `unknown_key::${key}::${language}`
+}
+console.log(`Setting language to ${Translated("language_locale")}`)
+
+export async function LOGIN_AS_INCOGNITO() {
+	return await KentiminKarti.LOGIN_AS_INCOGNITO()
+}

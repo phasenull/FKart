@@ -53,3 +53,8 @@ yarn-error.log
 .expo/
 web-build/
 dist/
+builds
+*.apk
+*.bundle
+swagger.yaml
+*.vscode
