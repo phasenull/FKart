@@ -1,8 +1,9 @@
 import { Fragment as Fragment, useState } from "react"
-import { Button, Dialog, List, MD3Colors, Portal, ProgressBar, Surface, Text, TextInput } from "react-native-paper"
-import { KentiminKarti } from "../network/KentiminKarti"
+import { Button, Dialog, List, Portal, Surface, Text, TextInput } from "react-native-paper"
+import { FCard } from "../network/FCard"
 import { Translated } from "../util"
 import React from "react"
+import { LoadingIndicator } from "../components/panels/LoadingIndıcator"
 interface DialogState {
 	visible: boolean
 	title?: string
@@ -24,7 +25,8 @@ export function DevPanel(props) {
 	const [dialog_message, set_dialog_message] = useState(state)
 	React.useEffect(() => {
 		async function getData() {
-			const data = await KentiminKarti.GET_DATA("testing")
+			return true
+			const data = await FCard.GET_DATA("testing")
 			set_data(data)
 			set_inputs({ ...inputs, card_no: data.card_no })
 		}
@@ -33,9 +35,10 @@ export function DevPanel(props) {
 	async function getBalance() {
 		{
 			set_loading(true)
-			const alias = inputs.card_no || ""
+			const alias = remove_dashes_from_string(inputs.card_no) || ""
 			// public api key
-			const url = `https://service.kentkart.com/rl1/api/card/balance?region=004&lang=tr&authType=3&token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrZW50a2FydC5jb20iLCJzdWIiOiJBQzE2IiwiYXVkIjoiYUMxdW4iLCJleHAiOjE3NjcyMTQ4MDAsIm5iZiI6MTY5Mjk2ODY2OSwiaWF0IjoxNjkyOTY4NjY5LCJqdGkiOiJmOWM5MDFmMi1iMTgzLTQ1NjYtYjIwYi1hMGI0YjZiYzM0MjUiLCJzeXN0ZW1faWQiOiIwMDQiLCJzY29wZXMiOltdfQ.V9c4Ud9Vjpc1bzHXnM1aL96xLCgeWQ1B3NejsdMTYow_eHgu8M6FiYFqYu9d56VjYwAJ7eMpFvr7cQPfRKCcAzB4MB0tyJWwS6LZybKlZvpu5XMiVhrh_wDYvvhbLO22oucYL7OIke0LFf92DLE65uhO7bbUv6pG6-RCUND7Ggn-v5B8XjjtYNUGU5-L27vr5iVLH_7pA7-Pw4EPHUQRP1rocxnhQYkVwk5T2I_NIMYOaL3ycDa_Mv_u9SfB0hBgcp9cEVU9PoxvlX8TP24rRjJtGVSlt0ina8EFh-20FzlqBPc8OjFjAbjegaynmOtrPOf3hCcrm80ZgS60o4IpOw&alias=${alias}`
+			//todo: change this to a private api key
+			const url = `https://service.kentkart.com/rl1/api/card/balance?region=004&lang=tr&authType=3&token=${undefined}&alias=${alias}`
 			const response = await fetch(url)
 			const json = await response.json()
 			if (!json) {
@@ -112,7 +115,7 @@ export function DevPanel(props) {
 				actions: [
 					{
 						clicked: async () => {
-							await KentiminKarti.SET_DATA("testing", { card_no: alias })
+							await FCard.SET_DATA("testing", { card_no: alias })
 						},
 						icon: "content-save",
 						text: "Save Card No",
@@ -136,14 +139,19 @@ export function DevPanel(props) {
 			})
 		}
 	}
-	const data_card = KentiminKarti.GET_DATA("testing")
+	const data_card = FCard.GET_DATA("testing")
 	const [inputs, set_inputs] = useState({
 		card_no: data.card_no,
 	})
+	function remove_dashes_from_string(string:string) {
+		return string.replace(/-/g, "")
+	}
 	return (
 		<Fragment>
+			<Text className="text-center text-2xl font-bold">Developer Panel</Text>
 			<Surface className="mx-auto w-[80%] my-auto p-5 rounded-xl">
 				<Portal>
+					{loading ? (<LoadingIndicator />) : null}
 					<Dialog
 						dismissable={true}
 						visible={dialog_message.visible}
@@ -173,7 +181,7 @@ export function DevPanel(props) {
 						</Dialog.Actions>
 					</Dialog>
 				</Portal>
-				<List.Section title={`Developer Panel U:${KentiminKarti.GetUser().name}`}>
+				<List.Section title={`Developer Panel U:${FCard.GetUser().name}`}>
 					<List.Accordion title="Code Testing" left={(props) => <List.Icon className="pl-5" icon="code-braces-box" />}>
 						<List.Item
 							title="Fetch Balance"
@@ -187,16 +195,15 @@ export function DevPanel(props) {
 							defaultValue={data.card_no}
 							placeholder="XXXXX-XXXXX-X"
 							value={inputs.card_no}
-							maxLength={11}
+							maxLength={13}
 							label={"Card No"}
 							className="pl-10"
 							inputMode="numeric"
-							// left={(props) => <List.Icon icon="credit-card-outline" />}
 							right={
 								<TextInput.Icon
 									icon="refresh"
 									onPress={() => {
-										set_inputs({ ...inputs, card_no: "01809439284" })
+										set_inputs({ ...inputs, card_no: "01809-43928-4" })
 									}}
 								/>
 							}
@@ -214,7 +221,7 @@ export function DevPanel(props) {
 								set_dialog_message({
 									visible: true,
 									title: "Result",
-									description: JSON.stringify(await KentiminKarti.GET_DATA("testing")),
+									description: JSON.stringify(await FCard.GET_DATA("testing")),
 									actions: [
 										{
 											clicked: () => {
@@ -235,7 +242,27 @@ export function DevPanel(props) {
 								set_dialog_message({
 									visible: true,
 									title: "Result",
-									description: JSON.stringify(await KentiminKarti.GET_DATA("language")),
+									description: JSON.stringify(await FCard.GET_DATA("language")),
+									actions: [
+										{
+											clicked: () => {
+												set_dialog_message({ visible: false })
+											},
+											text: "Ok",
+										},
+									],
+								})
+							}}
+						/>
+						<List.Item
+							title="region"
+							className="pl-10"
+							left={(props) => <List.Icon icon="import" />}
+							onPress={async () => {
+								set_dialog_message({
+									visible: true,
+									title: "Result",
+									description: JSON.stringify(await FCard.GET_DATA("region")),
 									actions: [
 										{
 											clicked: () => {
@@ -255,7 +282,27 @@ export function DevPanel(props) {
 								set_dialog_message({
 									visible: true,
 									title: "Result",
-									description: JSON.stringify(await KentiminKarti.GET_DATA("latest_page")),
+									description: JSON.stringify(await FCard.GET_DATA("latest_page")),
+									actions: [
+										{
+											clicked: () => {
+												set_dialog_message({ visible: false })
+											},
+											text: "Ok",
+										},
+									],
+								})
+							}}
+						/>
+						<List.Item
+							title="user"
+							className="pl-10"
+							left={(props) => <List.Icon icon="account" />}
+							onPress={async () => {
+								set_dialog_message({
+									visible: true,
+									title: "Result",
+									description: JSON.stringify(await FCard.GET_DATA("user")),
 									actions: [
 										{
 											clicked: () => {

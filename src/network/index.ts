@@ -1,1 +1,0 @@
-export const API_URL = "http://192.168.2.11:80/api/v1"

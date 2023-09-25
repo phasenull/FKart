@@ -3,12 +3,12 @@
     "name": "FKart",
     "slug": "FKart",
     "userInterfaceStyle": "automatic",
-    "version": "1.0.1",
+    "version": "23.9.21",
     "assetBundlePatterns": [
       "**/*"
     ],
     "android": {
-      "package": "undefined"
+      "package": "dev.phasenull.fkart"
     }
   },
   "name": "FKart"

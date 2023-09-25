@@ -12,15 +12,15 @@ export function TitleScreenCredits(props) {
 			<Button
 				mode="text"
 				icon={"instagram"}
-				className="text-white"
+				className="text-white absolute top-48 mx-auto"
 				textColor="white"
 				onPress={credits}
 				onLongPress={() => {
 					STATE_SET_snackbar(true)
+					// todo: fix this
 					// Clipboard.setString("https://instagram.com/arif.visuals")
-				}}
-			>
-				<Text className="text-white mb-0 font-bold">Shot by @</Text>
+				}}>
+				<Text className="text-white font-bold">Shot by @</Text>
 				arif.visuals
 			</Button>
 			<Portal>

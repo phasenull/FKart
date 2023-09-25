@@ -1,4 +1,4 @@
-import { KentiminKarti } from "./network/KentiminKarti"
+import { FCard } from "./network/FCard"
 
 export function validate(input, type) {
 	if (!type || !input) return [false, null]
@@ -10,8 +10,15 @@ export function validate(input, type) {
 				return [true, null]
 			}
 			return [false, "Invalid email"]
+		case "phone":
+			const regex2 = /^[\d]{10}$/g
+			const is_valid2 = input.match(regex2)
+			if (is_valid2) {
+				return [true, null]
+			}
+			return [false, "Invalid phone number"]
 		case "password":
-			if (input.length < 8) return [false, "Password must be at least 8 characters"]
+			if (input.length < 6) return [false, "Password must be at least 8 characters"]
 			if (input.includes(" ")) return [false, "Password must not include spaces"]
 			if (input.length >= 60) return [false, "Password must be less than 60 characters"]
 			return [true, null]
@@ -30,12 +37,12 @@ export function get_app_name() {
 }
 export function Translated(key: string, language?: String) {
 	key = key.toLowerCase()
-	language = language || KentiminKarti.GET_SETTINGS().language
+	language = language || FCard.GET_SETTINGS().language
 	if (!language) throw new Error("Language not set")
 
 	let TRANSLATIONS
 
-	TRANSLATIONS = KentiminKarti.TRANSLATIONS_GET()
+	TRANSLATIONS = FCard.TRANSLATIONS_GET()
 	// console.log("util.tsx:",TRANSLATIONS["language_locale_code"])
 	if (!TRANSLATIONS) throw new Error(`Translation file not found (${language})`)
 	// console.log(`[KentiminKarti/LOG]: Translation of (${key}) is (${TRANSLATIONS[key]}) in language ${language}`)
@@ -44,5 +51,5 @@ export function Translated(key: string, language?: String) {
 console.log(`Setting language to ${Translated("language_locale")}`)
 
 export async function LOGIN_AS_INCOGNITO() {
-	return await KentiminKarti.LOGIN_AS_INCOGNITO()
+	return await FCard.LOGIN_AS_INCOGNITO()
 }
