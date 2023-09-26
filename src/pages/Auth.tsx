@@ -19,7 +19,6 @@ export function AuthPage(props) {
 			const logged_in_user = await FKart.GetUser()
 			if (!logged_in_user) return
 			set_user(logged_in_user)
-			console.log("LOGGED_IN_USER", JSON.stringify(logged_in_user?.username))
 			const language = await FKart.GET_DATA("language")
 			set_language(language)
 		}
@@ -42,11 +41,11 @@ export function AuthPage(props) {
 	return (
 		<Surface className="h-full w-full" mode="flat" elevation={1}>
 			{/* TITLE & IMAGE */}
-			<Image source={require("../assets/media/tramvay.png")} className="absolute h-96 w-screen justify-center top-5" />
+			<Image source={require("../assets/media/tramvay.png")} className="absolute h-96 w-screen justify-center" />
 			<Text className="text-5xl absolute top-20 font-bold text-center self-center text-white">{get_app_name()}</Text>
 
 			{/* CREDITS */}
-			<TitleScreenCredits className="self-center" />
+			<TitleScreenCredits className="self-center top-40" />
 
 			{/* 
 				LOG IN / SIGN UP FORM LOADER
