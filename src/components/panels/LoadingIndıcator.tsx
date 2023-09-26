@@ -1,4 +1,4 @@
-import { Portal, ProgressBar, Surface, Text } from "react-native-paper"
+import { ActivityIndicator, Portal, ProgressBar, Surface, Text } from "react-native-paper"
 import React from "react"
 export function LoadingIndicator(props) {
 	const { loading } = props
@@ -6,7 +6,7 @@ export function LoadingIndicator(props) {
 		// <Portal>
 		<Surface elevation={0} mode="flat" className="mx-auto w-full p-5 my-auto">
 			<Text className="font-bold mx-auto my-5 text-xl">Loading...</Text>
-			<ProgressBar indeterminate={true} visible={true} />
+			<ActivityIndicator size={"large"} />
 		</Surface>
 		// </Portal>
 	)

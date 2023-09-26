@@ -12,7 +12,7 @@ export function TitleScreenCredits(props) {
 			<Button
 				mode="text"
 				icon={"instagram"}
-				className="text-white absolute top-48 mx-auto"
+				{...props}
 				textColor="white"
 				onPress={credits}
 				onLongPress={() => {

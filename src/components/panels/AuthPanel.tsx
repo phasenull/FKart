@@ -4,7 +4,7 @@ import { Translated, validate } from "../../util"
 import { useColorScheme } from "nativewind"
 import { RegionChooser } from "../special/RegionChooser"
 import User from "../../network/User"
-import { FCard } from "../../network/FCard"
+import { FKart } from "../../network/FKart"
 
 export default function Panel_Auth(props) {
 	const [data, setData] = useState({
@@ -16,11 +16,11 @@ export default function Panel_Auth(props) {
 	const { page_type } = props
 	const [loading, set_loading] = useState(false)
 	const [errors, set_errors] = useState({
-		email: "",
-		password: "",
-		confirm_password: "",
+		email: undefined,
+		password: undefined,
+		confirm_password: undefined,
 	})
-	const {move_to_page} = props
+	const { move_to_page } = props
 	const [response, set_response] = useState(null)
 	useEffect(() => {
 		const [email_success, email_error] = validate(data.email, User.is_input_phone(data.email) ? "phone" : "email")
@@ -45,7 +45,15 @@ export default function Panel_Auth(props) {
 		return email_success && password_success && (page_type == "Log In" ? true : confirm_password_error == null)
 	}
 	async function send_data() {
-		if (await FCard.GetUser()) {move_to_page();return}
+		if (await FKart.GetUser()) {
+			navigation.replace("Home")
+			return
+		}
+		if (!(await FKart.GET_DATA("region"))) {
+			set_response("Please select a region")
+			return
+		}
+
 		set_response(null)
 		const empty_errors: { email?: string; password?: string; confirm_password?: string } = {}
 		data.email || (empty_errors.email = "Please enter an email address")
@@ -59,12 +67,13 @@ export default function Panel_Auth(props) {
 		setTimeout(() => {
 			set_loading(false)
 		}, 1000)
-		const user = await User.LogIn(data.email, data.password).catch((error) => {
+		const user = await User.LogIn(data.email, data.password, await FKart.GET_DATA("region")).catch((error) => {
 			console.log("error", error.toString())
 			set_response(error.toString())
 			return
 		})
 		if (user) {
+			await FKart.SetUser(user)
 			navigation.push("Home")
 		}
 	}

@@ -1,4 +1,3 @@
-import { FCard } from "./FCard"
 
 export default class User {
 	private static _instance: User
@@ -28,10 +27,15 @@ export default class User {
 	public static phone_to_country_code(phone: string): string {
 		return "tr"
 	}
-	public static async LogIn(username: string, password: string): Promise<User | undefined> {
+	public static async LogIn(username: string, password: string, region:string): Promise<User | undefined> {
+		if (!username || !password) {
+			throw new Error("Username or password is empty!")
+		}
+		if (!region) {
+			throw new Error("Region is empty!")
+		}
 		const is_username = User.is_input_phone(username)
 		console.log(`Attempting to login ${username} ${password.slice(0, 1)}... ${is_username ? "username" : "phone number"}`)
-		const region = await FCard.GET_DATA("region").then((region) => region)
 		const body = {
 			clientId: "rH7S2",
 			countryCode: "tr",
@@ -41,7 +45,7 @@ export default class User {
 			responseType: "code",
 		}
 		const response = await fetch(
-			`https://auth.kentkart.com/rl1/oauth/authorize?region=004&authType=4&version=Web_1.6.4_1.0_CHROME_kentkart.web.mkentkart&lang=tr`,
+			`https://auth.kentkart.com/rl1/oauth/authorize?region=${region}&authType=4&version=Web_1.6.4_1.0_CHROME_kentkart.web.mkentkart&lang=tr`,
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -76,7 +80,6 @@ export default class User {
 		}
 		const user = new User({ username: username, token: response2.accessToken })
 		// console.log("Logged in user: ", user)
-		await FCard.SET_DATA("user", user)
 		return user
 	}
 	public toJson(): string {

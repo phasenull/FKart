@@ -1,7 +1,7 @@
 import { Button, Dialog, FAB, MD3LightTheme, Portal, Text } from "react-native-paper"
 import { useState, Fragment } from "react"
 import { LOGIN_AS_INCOGNITO, Translated } from "../../../util"
-import { FCard } from "../../../network/FCard"
+import { FKart } from "../../../network/FKart"
 import { useNavigation, useRoute } from "@react-navigation/native"
 import { Settings } from "react-native/Libraries/Settings/Settings"
 import React, { useEffect } from "react"
@@ -29,7 +29,7 @@ export function TitleScreenFAB(props) {
 			labelStyle: label_style,
 			label: "Developer Settings",
 			onPress: async () => {
-				await FCard.SET_DATA("latest_page", "DeveloperSettings")
+				await FKart.SET_DATA("latest_page", "DeveloperSettings")
 				navigation.push("DevPanel")
 			},
 			size: "medium",
@@ -50,7 +50,7 @@ export function TitleScreenFAB(props) {
 			labelStyle: label_style,
 			label: Translated("settings"),
 			onPress: async () => {
-				await FCard.SET_DATA("latest_page", "AppSettings")
+				await FKart.SET_DATA("latest_page", "AppSettings")
 				navigation.push("AppSettings")
 			},
 			size: "medium",
@@ -58,7 +58,7 @@ export function TitleScreenFAB(props) {
 	])
 	useEffect(() => {
 		async function get() {
-			const is_dev_mode_enabled = await FCard.GET_DATA("testing").then((data) => data?.is_dev_settings_enabled)
+			const is_dev_mode_enabled = await FKart.GET_DATA("testing").then((data) => data?.is_dev_settings_enabled)
 			console.log("is_dev_mode_enabled", is_dev_mode_enabled)
 			if (is_dev_mode_enabled) {
 				set_enabled_buttons({

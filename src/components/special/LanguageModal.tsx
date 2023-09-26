@@ -1,13 +1,13 @@
 import { NavigationProp } from "@react-navigation/native"
 import React, { useState, Fragment, useEffect } from "react"
 import { Button, List, Modal, Portal, Searchbar, Surface, Text } from "react-native-paper"
-import { FCard } from "../../network/FCard"
+import { FKart } from "../../network/FKart"
 export function LanguageModal(props) {
 
 	const {navigation} = props
 
 	const [modal, set_modal] = useState({ visible: true, language: "" })
-	const languages = FCard.GET_AVAILABLE_LANGUAGES()
+	const languages = FKart.GET_AVAILABLE_LANGUAGES()
 	const [selected_language, set_selected_language] = useState({ name: "", id: undefined })
 	const [searchQuery, setSearchQuery] = React.useState(null)
 	const {onLeave} = props
@@ -18,9 +18,10 @@ export function LanguageModal(props) {
 	useEffect(() => {
 		if (!selected_language.id) return
 		console.log("language changed!", selected_language.id)
-		FCard.SET_SETTING("language", selected_language.id)
+		FKart.SET_SETTING("language", selected_language.id)
 		console.log("navigation", navigation)
-		navigation.reset()
+		navigation.popToTop("Auth")
+		navigation.replace("Auth")
 	}, [selected_language.id])
 	return (
 		<Modal visible={modal.visible} onDismiss={() => {onLeave()}}>

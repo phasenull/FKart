@@ -14,7 +14,7 @@ export default function Info(props) {
 	}, [])
 
 	return (
-		<Surface>
+		<Surface className="h-full">
 			{(params.info_page && pages.find((e) => e.name === params.page)?.component) || (
 				<React.Fragment>
 					<Title className="text-sm">{`${bus_data.displayRouteCode} - ${bus_data.name} \n`}</Title>

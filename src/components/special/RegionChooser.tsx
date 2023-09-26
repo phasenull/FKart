@@ -1,21 +1,18 @@
 import React, { useState, Fragment, useEffect } from "react"
 import { ScrollView } from "react-native"
 import { Button, List, Modal, Portal, Searchbar, Surface, Text } from "react-native-paper"
-import { FCard } from "../../network/FCard"
-export function RegionChooser() {
+import { FKart } from "../../network/FKart"
+export function RegionChooser(props) {
 	const [region, set_region] = useState({ name: undefined, id: undefined })
 	const [modal, set_modal] = useState({ visible: false, region: "" })
 	const [regions, set_regions] = useState([])
+	async function get_region() {
+		const data = await FKart.GET_DATA("region")
+		set_region(data)
+	}
 	useEffect(() => {
-		const region_data = async () => {
-			return await FCard.GET_DATA("region")
-		}
-		console.log("region_data", region_data)
-		region_data().then((regiondata) => {
-			console.log("region", regiondata)
-			set_region(regiondata)
-		})
-		FCard.GET_REGIONS().then((regions) => {
+		get_region()
+		FKart.GET_REGIONS().then((regions) => {
 			set_regions(regions)
 		})
 	}, [])
@@ -23,12 +20,11 @@ export function RegionChooser() {
 
 	const onChangeSearch = (query) => {
 		setSearchQuery(query)
-		console.log("searchQuery", searchQuery)
 	}
 	useEffect(() => {
+		if (!region) return
 		if (!region?.name) return
-		console.log("region changed!", region)
-		FCard.SET_SETTING("region", region)
+		FKart.SET_SETTING("region", region)
 	}, [region])
 	return (
 		<Fragment>
@@ -51,7 +47,7 @@ export function RegionChooser() {
 													title={region?.name}
 													onPress={() => {
 														set_region({ id: region.id, name: region?.name })
-														FCard.SET_SETTING("region", region)
+														FKart.SET_SETTING("region", region)
 														set_modal({ visible: false, region: region?.id })
 													}}
 												/>
@@ -68,7 +64,7 @@ export function RegionChooser() {
 					</Surface>
 				</Modal>
 			</Portal>
-			<Button icon={"map-marker"} className="mb-1" mode="contained-tonal" onPress={() => set_modal({ visible: true, region: undefined })}>
+			<Button {...props} icon={"map-marker"} className="mb-1" mode="contained-tonal" onPress={() => set_modal({ visible: true, region: undefined })}>
 				{region?.id ? `Selected Region: ${region?.name}` : "Select Region"}
 			</Button>
 		</Fragment>

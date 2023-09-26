@@ -1,4 +1,4 @@
-import { FCard } from "./network/FCard"
+import { FKart } from "./network/FKart"
 
 export function validate(input, type) {
 	if (!type || !input) return [false, null]
@@ -33,16 +33,16 @@ export function validate(input, type) {
 	}
 }
 export function get_app_name() {
-	return "Kentimin Kartı"
+	return "FKart"
 }
 export function Translated(key: string, language?: String) {
 	key = key.toLowerCase()
-	language = language || FCard.GET_SETTINGS().language
+	language = language || FKart.GET_SETTINGS().language
 	if (!language) throw new Error("Language not set")
 
 	let TRANSLATIONS
 
-	TRANSLATIONS = FCard.TRANSLATIONS_GET()
+	TRANSLATIONS = FKart.TRANSLATIONS_GET()
 	// console.log("util.tsx:",TRANSLATIONS["language_locale_code"])
 	if (!TRANSLATIONS) throw new Error(`Translation file not found (${language})`)
 	// console.log(`[KentiminKarti/LOG]: Translation of (${key}) is (${TRANSLATIONS[key]}) in language ${language}`)
@@ -51,5 +51,5 @@ export function Translated(key: string, language?: String) {
 console.log(`Setting language to ${Translated("language_locale")}`)
 
 export async function LOGIN_AS_INCOGNITO() {
-	return await FCard.LOGIN_AS_INCOGNITO()
+	return await FKart.LOGIN_AS_INCOGNITO()
 }

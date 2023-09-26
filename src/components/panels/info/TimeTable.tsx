@@ -3,6 +3,7 @@ import { ScrollView, View } from "react-native"
 import { Button, Chip, Dialog, Divider, IconButton, List, Portal, ProgressBar, SegmentedButtons, Surface, Text, Title } from "react-native-paper"
 import { Translated } from "../../../util"
 import { LoadingIndicator } from "../LoadingIndıcator"
+import { Retry } from "../Retry"
 
 export function TimeTable(props) {
 	const { navigation } = props
@@ -14,17 +15,26 @@ export function TimeTable(props) {
 	const [parameters, set_parameters] = React.useState({ work_days: null })
 	const [route_info, set_route_info] = React.useState(null)
 	const [direction, set_direction] = React.useState(false)
-	useEffect(() => {
+	async function get() {
+		set_loading(true)
 		const url = `https://service.kentkart.com/rl1//web/pathInfo?region=004&lang=tr&authType=4&direction=${
 			direction === true ? "1" : "0"
 		}&displayRouteCode=${route_no}&resultType=111111` //111111
-		async function get() {
-			set_loading(true)
-			const response = await fetch(url)
-			const json = JSON.parse(await response.text())
-			set_data(json?.pathList[0] || [])
-			set_loading(false)
-		}
+		const response = await fetch(url)
+			.then(async (data) => {
+				return await data.json()
+			})
+
+			.catch((e) => {
+				set_data([])
+				set_loading(false)
+				console.log("TimeTable", e.message)
+				return
+			})
+		set_data(response?.pathList[0] || [])
+		set_loading(false)
+	}
+	useEffect(() => {
 		get()
 	}, [direction])
 	useEffect(() => {
@@ -50,7 +60,7 @@ export function TimeTable(props) {
 		return return_value
 	}
 	return (
-		<React.Fragment>
+		<Surface className="h-full">
 			<Portal>
 				<Dialog
 					onDismiss={() => {
@@ -58,8 +68,7 @@ export function TimeTable(props) {
 					}}
 					visible={route_info}
 				>
-					<Text
-					className="px-5">{route_info}</Text>
+					<Text className="px-5">{route_info}</Text>
 					<Dialog.Actions>
 						<Button
 							onPress={() => {
@@ -75,7 +84,7 @@ export function TimeTable(props) {
 			<SegmentedButtons
 				className="mx-10 inline-block"
 				value={parameters.work_days}
-				onValueChange={(value) => set_parameters({ ...parameters, work_days: value })}
+				onValueChange={(value) => {set_parameters({ ...parameters, work_days: value })}}
 				buttons={[
 					{
 						value: "MTWTFss",
@@ -99,35 +108,42 @@ export function TimeTable(props) {
 				icon="arrow-left-right"
 				mode="contained"
 			/>
-				<ScrollView className="h-96 mb-5" showsHorizontalScrollIndicator={false}>
-					{loading ? (
-						<LoadingIndicator />
-					) : (
-						data?.scheduleList
-							.find((a) => a.description === parameters.work_days)
-							?.timeList.map((e) => (
-								<React.Fragment>
-									<View key={e.departureTime}>
-										<Button className="w-48 h-max" onPress={() => {}}>
-											{e.departureTime || "INVALID TIME"}
-										</Button>
-										{e.tripHeadSign !== "" ? (
-											<IconButton
-												className="right-0"
-												icon={"information-outline"}
-												onPress={() => {
-													if (e.tripHeadSign !== "") {
-														set_route_info(e.tripHeadSign)
-													}
-												}}
-											></IconButton>
-										) : null}
-									</View>
-									<Divider key={`${e.departureTime}-divider`} />
-								</React.Fragment>
-							))
-					)}
-				</ScrollView>
-		</React.Fragment>
+			<ScrollView showsHorizontalScrollIndicator={false}>
+				{loading ? (
+					<LoadingIndicator />
+				) : (
+					data?.scheduleList
+						?.find((a) => a.description === parameters.work_days)
+						?.timeList.map((e) => (
+							<React.Fragment>
+								<View key={e.departureTime}>
+									{e.tripHeadSign !== "" ? (
+										<IconButton
+											className="right-0"
+											icon={"information-outline"}
+											onPress={() => {
+												if (e.tripHeadSign !== "") {
+													set_route_info(e.tripHeadSign)
+												}
+											}}
+										></IconButton>
+									) : null}
+									<Button className="w-48 h-max" onPress={() => {}}>
+										{e.departureTime || "INVALID TIME"}
+									</Button>
+								</View>
+								<Divider key={`divider-${e.departureTime}`} />
+							</React.Fragment>
+						)) || (
+						<Retry
+							error={"Server responded with invalid data"}
+							onPress={() => {
+								get()
+							}}
+						/>
+					)
+				)}
+			</ScrollView>
+		</Surface>
 	)
 }
