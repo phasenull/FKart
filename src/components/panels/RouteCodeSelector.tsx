@@ -1,8 +1,8 @@
 import React, { useEffect } from "react"
-import { ScrollView } from "react-native"
+import { FlatList, RefreshControl, ScrollView } from "react-native"
 import { IconButton, List, Searchbar, Surface, Text } from "react-native-paper"
 import { FKart } from "../../network/FKart"
-import { LoadingIndicator } from "./LoadingIndıcator"
+import { LoadingIndicator } from "./LoadingIndicator"
 import { Retry } from "./Retry"
 export default function RouteCodeSelector(props) {
 	const [data, setData] = React.useState({
@@ -45,6 +45,7 @@ export default function RouteCodeSelector(props) {
 	const onTextInput = (text) => {
 		set_search_query(text)
 	}
+
 	return (
 		<React.Fragment>
 			{loading ? <LoadingIndicator /> : null}
@@ -53,23 +54,25 @@ export default function RouteCodeSelector(props) {
 			) : data?.bus_list ? (
 				<React.Fragment>
 					<Searchbar className="mt-3 mx-5" value={search_query || ""} placeholder="Search Routes" onChangeText={onTextInput}></Searchbar>
-					<ScrollView className="h-screen">
-						{data?.bus_list
+					<FlatList
+						data={data?.bus_list
 							?.filter(
 								(e: { displayRouteCode: string; name: string }) =>
 									e.displayRouteCode?.match(search_query.toLowerCase()) || e.name?.toLowerCase().match(search_query.toLowerCase())
 							)
-							.slice(0, 20)
-							.map((bus) => (
-								<List.Item
-									key={bus?.displayRouteCode}
-									title={`${bus?.displayRouteCode} - ${bus?.name}`}
-									onPress={() => {
-										navigation.push("Info", { bus_data: bus, direction: 0 })
-									}}
-								/>
-							))}
-					</ScrollView>
+							.slice(0, 50)}
+						refreshControl={<RefreshControl refreshing={false} onRefresh={get} />}
+						className="h-screen"
+						renderItem={({item}: any) => (
+							<List.Item
+								key={item?.displayRouteCode}
+								title={`${item?.displayRouteCode} - ${item?.name}`}
+								onPress={() => {
+									navigation.push("Info", { bus_data: item, direction: 0, page: "BusInfo" })
+								}}
+							/>
+						)}
+					></FlatList>
 				</React.Fragment>
 			) : null}
 		</React.Fragment>

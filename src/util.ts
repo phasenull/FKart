@@ -46,7 +46,7 @@ export function Translated(key: string, language?: String) {
 	// console.log("util.tsx:",TRANSLATIONS["language_locale_code"])
 	if (!TRANSLATIONS) throw new Error(`Translation file not found (${language})`)
 	// console.log(`[KentiminKarti/LOG]: Translation of (${key}) is (${TRANSLATIONS[key]}) in language ${language}`)
-	return TRANSLATIONS[key] || `unknown_key::${key}::${language}`
+	return TRANSLATIONS[key]?TRANSLATIONS[key][language] : `unknown_key::${key}::${language}`
 }
 console.log(`Setting language to ${Translated("language_locale")}`)
 

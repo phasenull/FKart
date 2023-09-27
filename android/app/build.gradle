@@ -17,6 +17,12 @@ if (System.getenv('EX_UPDATES_NATIVE_DEBUG') == "1") {
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
  */
+
+ configurations.all {
+    resolutionStrategy {
+        force "com.facebook.fresco:fresco:2.5.0"
+    }
+}
 react {
     entryFile = file(["node", "-e", "require('expo/scripts/resolveAppEntry')", projectRoot, "android", "absolute"].execute(null, rootDir).text.trim())
     reactNativeDir = new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim()).getParentFile().getAbsoluteFile()
@@ -200,7 +206,7 @@ dependencies {
 
     // If your app supports Android versions before Ice Cream Sandwich (API level 14)
     if (isGifEnabled || isWebpEnabled) {
-        implementation("com.facebook.fresco:fresco:${frescoVersion}")
+        implementation("com.facebook.fresco:fresco:2.5.0")
         implementation("com.facebook.fresco:imagepipeline-okhttp3:${frescoVersion}")
     }
 

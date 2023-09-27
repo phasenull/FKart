@@ -1,6 +1,6 @@
 {
   "name": "fkart",
-  "version": "23.9.25",
+  "version": "23.9.27.2",
   "main": "index.js",
   "scripts": {
     "start": "expo start --dev-client",
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.19.3",
+    "@react-native-clipboard/clipboard": "^1.12.1",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.13",
     "expo": "~48.0.18",

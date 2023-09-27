@@ -3,7 +3,7 @@ import { Button, Dialog, List, Portal, Surface, Text, TextInput } from "react-na
 import { FKart } from "../network/FKart"
 import { Translated } from "../util"
 import React from "react"
-import { LoadingIndicator } from "../components/panels/LoadingIndıcator"
+import { LoadingIndicator } from "../components/panels/LoadingIndicator"
 interface DialogState {
 	visible: boolean
 	title?: string

@@ -1,4 +1,3 @@
-
 export default class User {
 	private static _instance: User
 	public token: string
@@ -45,7 +44,7 @@ export default class User {
 			responseType: "code",
 		}
 		const response = await fetch(
-			`https://auth.kentkart.com/rl1/oauth/authorize?region=${region}&authType=4&version=Web_1.6.4_1.0_CHROME_kentkart.web.mkentkart&lang=tr`,
+			`https://auth.kentkart.com/rl1/oauth/authorize?region=${region}&authType=4`,
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -63,7 +62,7 @@ export default class User {
 		const one_time_code = response.code
 		// console.log("recieved code", one_time_code)
 
-		const response2 = await fetch("https://auth.kentkart.com/rl1/oauth/token?region=004&authType=4&version=Web_1.6.4_1.0_CHROME_kentkart.web.mkentkart&lang=tr", {
+		const response2 = await fetch("https://auth.kentkart.com/rl1/oauth/token?region=004&authType=4", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -81,6 +80,18 @@ export default class User {
 		const user = new User({ username: username, token: response2.accessToken })
 		// console.log("Logged in user: ", user)
 		return user
+	}
+	public async GetFavorites(region: string) {
+		const url = `https://service.kentkart.com/rl1/api/v4.0/favorite?region=${region}&authType=4`
+		const request = await fetch(url, {headers: {Authorization: `Bearer ${this.token}`}})
+		const data = await request.json()
+		return data
+	}
+	public async DeleteFavorite({favId,region_id}:{favId:string,region_id:string}) {
+		const url = `https://service.kentkart.com/rl1/api/v3.0/favorite?region=${region_id}&authType=4&favId=${favId}`
+		const request = await fetch(url, {headers:{Authorization: `Bearer ${this.token}`}, method:"delete"})
+		const data = await request.json()
+		return data
 	}
 	public toJson(): string {
 		return JSON.stringify(this)

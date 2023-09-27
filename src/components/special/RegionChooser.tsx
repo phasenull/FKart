@@ -2,6 +2,7 @@ import React, { useState, Fragment, useEffect } from "react"
 import { ScrollView } from "react-native"
 import { Button, List, Modal, Portal, Searchbar, Surface, Text } from "react-native-paper"
 import { FKart } from "../../network/FKart"
+import { Translated } from "../../util"
 export function RegionChooser(props) {
 	const [region, set_region] = useState({ name: undefined, id: undefined })
 	const [modal, set_modal] = useState({ visible: false, region: "" })
@@ -65,7 +66,7 @@ export function RegionChooser(props) {
 				</Modal>
 			</Portal>
 			<Button {...props} icon={"map-marker"} className="mb-1" mode="contained-tonal" onPress={() => set_modal({ visible: true, region: undefined })}>
-				{region?.id ? `Selected Region: ${region?.name}` : "Select Region"}
+				{region?.id ? `${Translated("selected_region").split("/*")[0]} ${region?.name}` : "Select Region"}
 			</Button>
 		</Fragment>
 	)

@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import { ScrollView, View } from "react-native"
 import { Button, Chip, Dialog, Divider, IconButton, List, Portal, ProgressBar, SegmentedButtons, Surface, Text, Title } from "react-native-paper"
 import { Translated } from "../../../util"
-import { LoadingIndicator } from "../LoadingIndıcator"
+import { LoadingIndicator } from "../LoadingIndicator"
 import { Retry } from "../Retry"
 
 export function TimeTable(props) {

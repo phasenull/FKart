@@ -13,19 +13,10 @@ export abstract class FKart {
 	private static __metadata__ = {
 		is_initialized: false,
 	}
-	public static READ_TRANSLATION_FILE(language: String) {
-		let TRANSLATIONS
-		switch (language.toString()) {
-			case "tr":
-				console.log("READING TURKISH FILE ")
-				TRANSLATIONS = require(`./../assets/lang/tr.json`)
-				break
-			default:
-				console.log("READING ENGLISH FILE ")
-				TRANSLATIONS = require(`./../assets/lang/en.json`)
-				break
-		}
-		console.log(`[FKart/LOG]: \x1b[36mTranslation file ${language} (${TRANSLATIONS["language_locale"]}) read.\x1b[0m`)
+	public static READ_TRANSLATION_FILE() {
+		console.log("READING TRANSLATION FILE ")
+		const TRANSLATIONS = require(`./../assets/lang/translations.json`)
+		console.log(`[FKart/LOG]: \x1b[36mTranslation file (${TRANSLATIONS["language_locale"][FKart.language]}) read.\x1b[0m`)
 		return TRANSLATIONS
 	}
 	public static async GET_REGIONS() {
@@ -53,11 +44,11 @@ export abstract class FKart {
 			console.log("\x1b[31m No translation file is loaded\x1b[0m")
 			FKart.TRANSLATIONS_REFRESH()
 		}
-		if (!(FKart.language == FKart.translations["language_locale_code"])) FKart.TRANSLATIONS_REFRESH()
+		// if (!(FKart.language == FKart.translations["language_locale_code"])) FKart.TRANSLATIONS_REFRESH()
 		return FKart.translations
 	}
 	public static TRANSLATIONS_REFRESH() {
-		FKart.translations = FKart.READ_TRANSLATION_FILE(FKart.language)
+		FKart.translations = FKart.READ_TRANSLATION_FILE()
 	}
 	public static GET_AVAILABLE_LANGUAGES() {
 		return [
@@ -86,7 +77,7 @@ export abstract class FKart {
 					if (!value) throw new Error(`App Error: Can't change settings for (${key}) because value is null (KentminKarti.language).`)
 					console.log(`[FKart/LOG]: Setting language to ${value}`)
 					FKart.language = value
-					FKart.translations = FKart.READ_TRANSLATION_FILE(value)
+					FKart.translations = FKart.READ_TRANSLATION_FILE()
 					FKart.SET_DATA("language", value)
 					return true
 				} catch {

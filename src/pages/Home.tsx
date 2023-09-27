@@ -5,6 +5,7 @@ import { BottomNavigation, Portal, Surface, Text } from "react-native-paper"
 import { PANEL_Account } from "../components/panels/Account"
 import WebView from "react-native-webview"
 import RouteCodeSelector from "../components/panels/RouteCodeSelector"
+import { Translated } from "../util"
 
 export function Home(props) {
 	const { navigation } = props
@@ -51,10 +52,10 @@ export function Home(props) {
 		},
 	})
 	const routes = [
-		{ key: "routes", title: "Routes", focusedIcon: "bus" },
-		{ key: "home", title: "Home", focusedIcon: "home" },
-		{ key: "map", title: "Map", focusedIcon: "map" },
-		{ key: "account", title: "Account", focusedIcon: "account" },
+		{ key: "routes", title: Translated("routes"), focusedIcon: "bus" },
+		{ key: "home", title: Translated("home"), focusedIcon: "home" },
+		{ key: "map", title: Translated("Map"), focusedIcon: "map" },
+		{ key: "account", title: Translated("Account"), focusedIcon: "account" },
 	]
 	return <BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} />
 }
