@@ -63,8 +63,9 @@ export default function RouteCodeSelector(props) {
 							.slice(0, 50)}
 						refreshControl={<RefreshControl refreshing={false} onRefresh={get} />}
 						className="h-screen"
-						renderItem={({item}: any) => (
+						renderItem={({ item }: any) => (
 							<List.Item
+								titleStyle={{ color: `#${item.routeColor || "fff"}` }}
 								key={item?.displayRouteCode}
 								title={`${item?.displayRouteCode} - ${item?.name}`}
 								onPress={() => {

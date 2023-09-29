@@ -32,4 +32,6 @@
 	"go_to_title_screen": { "tr": "Giriş Sayfasına Dön", "en": "Go to Title Screen" },
 	"visuals": { "tr": "Görseller", "en": "Visuals" },
 	"danger_zone": { "tr": "Tehlikeli Bölge", "en": "Danger Zone" },
+	"remove": { "tr": "Kaldır", "en": "Remove" },
+	"route": { "tr": "Hat", "en": "Route" }
 }

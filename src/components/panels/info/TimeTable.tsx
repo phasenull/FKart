@@ -38,6 +38,9 @@ export function TimeTable(props) {
 		get()
 	}, [direction])
 	useEffect(() => {
+		navigation.setOptions({
+			title: `${Translated("route")} - ${route_no}`,
+		})
 		get_today_type()
 	}, [])
 
@@ -80,34 +83,38 @@ export function TimeTable(props) {
 					</Dialog.Actions>
 				</Dialog>
 			</Portal>
-			<Title className="font-bold text-lg">{data ? data.headSign : "Loading..."}</Title>
-			<SegmentedButtons
-				className="mx-10 inline-block"
-				value={parameters.work_days}
-				onValueChange={(value) => {set_parameters({ ...parameters, work_days: value })}}
-				buttons={[
-					{
-						value: "MTWTFss",
-						label: "Weekdays",
-					},
-					{
-						value: "mtwtfSs",
-						label: "Saturday",
-					},
-					{
-						value: "mtwtfsS",
-						label: "Sunday",
-					},
-				]}
-			/>
-			<IconButton
-				onPress={() => {
-					set_direction(!direction)
-				}}
-				className="inline-block self-end m-3"
-				icon="arrow-left-right"
-				mode="contained"
-			/>
+			<Title className="font-bold text-lg self-center my-4">{data ? data.headSign : "Loading..."}</Title>
+			<View className="h-16 py-auto">
+				<SegmentedButtons
+					className="absolute my-auto mr-12 ml-4"
+					value={parameters.work_days}
+					onValueChange={(value) => {
+						set_parameters({ ...parameters, work_days: value })
+					}}
+					buttons={[
+						{
+							value: "MTWTFss",
+							label: "Weekdays",
+						},
+						{
+							value: "mtwtfSs",
+							label: "Saturday",
+						},
+						{
+							value: "mtwtfsS",
+							label: "Sunday",
+						},
+					]}
+				/>
+				<IconButton
+					onPress={() => {
+						set_direction(!direction)
+					}}
+					className="absolute my-auto mr-4 self-end"
+					icon="arrow-left-right"
+					mode="contained"
+				/>
+			</View>
 			<ScrollView showsHorizontalScrollIndicator={false}>
 				{loading ? (
 					<LoadingIndicator />
@@ -115,24 +122,25 @@ export function TimeTable(props) {
 					data?.scheduleList
 						?.find((a) => a.description === parameters.work_days)
 						?.timeList.map((e) => (
-							<React.Fragment>
-								<View key={e.departureTime}>
+							<React.Fragment key={`${e.departureTime}-${Math.random()}`}>
+								<View key={`${e.departureTime}-${Math.random()}`}>
+									<Button textColor={`#${e.patternColor || "fff"}`} className="w-full text-left mr-12 h-max self-start" onPress={() => {}}>
+										{e.departureTime || "INVALID TIME"}
+									</Button>
 									{e.tripHeadSign !== "" ? (
 										<IconButton
-											className="right-0"
+											className="absolute my-auto self-end"
 											icon={"information-outline"}
 											onPress={() => {
+												console.log(e)
 												if (e.tripHeadSign !== "") {
 													set_route_info(e.tripHeadSign)
 												}
 											}}
 										></IconButton>
 									) : null}
-									<Button className="w-48 h-max" onPress={() => {}}>
-										{e.departureTime || "INVALID TIME"}
-									</Button>
 								</View>
-								<Divider key={`divider-${e.departureTime}`} />
+								<Divider key={`divider-${e.departureTime}-${Math.random()}`} className="z-[5]" />
 							</React.Fragment>
 						)) || (
 						<Retry

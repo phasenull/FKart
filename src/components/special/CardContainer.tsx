@@ -1,8 +1,9 @@
 import { Badge, IconButton, Surface, Text } from "react-native-paper"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import Card from "../../network/Card"
-import { Image, View } from "react-native"
+import { Image, Animated, View, PanResponder } from "react-native"
 import { FKart } from "../../network/FKart"
+import { Translated } from "../../util"
 export function CardContainer(props) {
 	const card: Card = props.card
 	const { navigation } = props
@@ -18,87 +19,110 @@ export function CardContainer(props) {
 		set_card_image(images["0" + Math.floor(Math.random() * 5).toString()])
 	}, [])
 	const DELETE_OFFSET = 160
-	const GRID_OFFSET = 20
-	const ROTATE_OFFSET = 70
 	const [show, set_show] = useState(true)
-	const [delete_size, set_delete_size] = useState(0)
+	const container_data = useRef({
+		visible: true,
+		swipe_size: 0,
+	})
+	const [swipe_size] = useState(new Animated.Value(0))
+	const pan_responder = PanResponder.create({
+		onMoveShouldSetPanResponder: () => true,
+		onPanResponderMove: (e, gesture) => {
+			if (-gesture.dx > 0) {
+				swipe_size.setValue(-gesture.dx)
+				container_data.current.swipe_size = Number.parseInt(JSON.stringify(swipe_size))
+			}
+		},
+		onMoveShouldSetPanResponderCapture: () => true,
+		onPanResponderEnd(e, gestureState) {
+			swipe_size.setValue(0)
+			if (container_data.current.swipe_size / DELETE_OFFSET > 1) {
+				HandleDelete()
+				console.log("swipe_%", container_data.current.swipe_size / DELETE_OFFSET)
+			}
+		},
+	})
 	const { set_locked } = props
-	useEffect(() => {
-		if (delete_size > 0) {
-			set_locked(true)
-		} else {
-			set_locked(false)
-		}
-	}, [delete_size])
 	async function HandleDelete() {
 		console.log(`Deleting card ${card.alias} "${card.description}"`)
 		const region = await FKart.GET_DATA("region")
 		const fav_id = card.favorite_id
 		const user = await FKart.GetUser()
-		const response = await user.DeleteFavorite({favId:fav_id,region_id:region.id})
+		set_show(false)
+		const response = await user.DeleteFavorite({ favId: fav_id, region_id: region.id })
 		console.log(response)
 	}
 	const Clamp = (num, min, max) => Math.min(Math.max(num, min), max)
 	return show ? (
-		<Surface
-			onTouchStart={(e) => {
-				this.touchX = e.nativeEvent.pageX
-			}}
-			onTouchEnd={(e) => {
-				if (this.touchX - e.nativeEvent.pageX > DELETE_OFFSET) {
-					console.log("Swiped up", delete_size)
-					HandleDelete()
-					set_show(false)
-				}
-				set_delete_size(0)
-			}}
-			onTouchEndCapture={(e) => {
-				set_delete_size(0)
-			}}
-			onTouchCancel={(e) => {
-				set_delete_size(0)
-			}}
-			onTouchMove={(e) => {
-				const diff = Math.floor(this.touchX - e.nativeEvent.pageX)
-				set_delete_size(diff)
-			}}
+		<Animated.View
+			{...pan_responder.panHandlers}
 			style={{
-				right: delete_size > 20 ? Clamp(delete_size,20,delete_size*0.7) : 0,
+				// right: swipe_size,
 				transform: [
-					{ rotateZ: `-${delete_size > ROTATE_OFFSET ? Clamp(Math.abs((delete_size - ROTATE_OFFSET) * 0.4),0,90).toString() : "0"}deg` },
-					{ translateX : -(delete_size > DELETE_OFFSET ? (delete_size - DELETE_OFFSET) : 0)}
-					// { rotateX: `${delete_size > DELETE_OFFSET ? Math.abs((delete_size - DELETE_OFFSET)).toString() : "0"}deg` },
+					{ rotateY: swipe_size.interpolate({ inputRange: [0, DELETE_OFFSET], outputRange: [`0deg`, `-180deg`], extrapolate: `clamp` }) },
+					{ scale: swipe_size.interpolate({ inputRange: [DELETE_OFFSET, DELETE_OFFSET * 1.1], outputRange: [1, 0.9], extrapolate: `clamp` }) },
 				],
-				zIndex: delete_size > 0 ? 5 : 0
 			}}
-			key={card.alias}
-			mode="flat"
-			className={"h-32 w-80 self-center mt-5 p-5 rounded-[16px]"}
 		>
-			<View className="absolute self-start right-28 my-auto">
-			{card_image ? <Image className={"scale-[0.35] bottom-14 right-4 rotate-90"} source={card_image} /> : null }
-			</View>
-			{card.blacklist_status ? (
-				<View className="absolute self-start right-28">
-					{card_image ? <Image className={"scale-[0.35] botom-14 right-4 rotate-90 opacity-70"} style={{ tintColor: "black" }} source={card_image} /> : null}
+			<Surface key={card.alias} mode="flat" className={"h-32 w-80 self-center mt-5 p-5 rounded-[16px]"}>
+				{
+					<Animated.View
+						{...pan_responder.panHandlers}
+						className={`absolute self-center h-32 w-80 z-[2] bg-["ff0000"] rounded-[16px]`}
+						style={{
+							opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2 - 0.01, DELETE_OFFSET / 2], outputRange: [0, 1], extrapolate: `clamp` }),
+							// 33FF71 - green
+							backgroundColor: swipe_size.interpolate({
+								inputRange: [DELETE_OFFSET * 0.9, DELETE_OFFSET * 0.9 + 0.01],
+								outputRange: [`#ff0000`, `#ff0000`],
+								extrapolate: `clamp`,
+							}),
+							transform: [{ rotateY: "180deg" }],
+						}}
+					>
+						<Text className="inline text-center self-center mt-auto mb-3 font-bold text-[32px]">{Translated("remove")}</Text>
+						<Text className="inline text-center self-center mb-auto bottom-3 font-bold text-[20px]">"{card.description}"?</Text>
+						<Animated.Text
+							style={{
+								opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET * 0.95, DELETE_OFFSET * 1+0.01], outputRange: [1,0], extrapolate: `clamp` }),
+								right: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2, DELETE_OFFSET], outputRange: ["0%", "85%"], extrapolate: `clamp` }),
+							}}
+							className="absolute text-[128px] -bottom-3 self-end"
+						>
+							{"<"}
+						</Animated.Text>
+					</Animated.View>
+				}
+				<Animated.View
+					className="absolute self-start right-28 my-auto z-[3]"
+					style={{
+						opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2 - 0.01, DELETE_OFFSET / 2], outputRange: [1, 0], extrapolate: `clamp` }),
+					}}
+				>
+					{card_image ? <Image className={"scale-[0.35] bottom-14 right-4 rotate-90"} source={card_image} /> : null}
+				</Animated.View>
+				{card.blacklist_status ? (
+					<View className="absolute self-start right-28 z-[4]">
+						{card_image ? <Image className={"scale-[0.35] botom-14 right-4 rotate-90 opacity-70"} style={{ tintColor: "black" }} source={card_image} /> : null}
+					</View>
+				) : null}
+				<View pointerEvents="none" className="pl-20 my-auto">
+					<Text className="self-start mt-5 bottom-3 text-lg">{card.description}</Text>
+					<Text className="self-start font-bold mb-5 text-[28px]">{card.balance} TL</Text>
 				</View>
-			) : null}
-			<View pointerEvents="none" className="pl-20 my-auto">
-				<Text className="self-start mt-5 bottom-3 text-lg">{card.description}</Text>
-				<Text className="self-start font-bold mb-5 text-[28px]">{card.balance} TL</Text>
-			</View>
-			{card.blacklist_status ? (
-				<Text className="absolute self-start text-red-600 rotate-[-15deg] font-bold text-[52px] self-center top-[40%]">Kara Liste</Text>
-			) : null}
-			{card.loads_in_line?.length ? <Badge className="absolute self-end -top-1 -right-1 scale-[1.25]">{card.loads_in_line?.length}</Badge> : null}
-			<IconButton
-				onPress={() => {
-					navigation.push("Info", { page: "CardInfo", card: card, image: card_image })
-				}}
-				icon="chevron-right"
-				size={36}
-				className="absolute opacity-30 w-8 h-32 self-end -bottom-1"
-			/>
-		</Surface>
+				{card.blacklist_status ? (
+					<Text className="absolute self-start text-red-600 rotate-[-15deg] font-bold text-[52px] self-center top-[40%]">Kara Liste</Text>
+				) : null}
+				{card.loads_in_line?.length ? <Badge className="absolute self-end -top-1 -right-1 scale-[1.25]">{card.loads_in_line?.length}</Badge> : null}
+				<IconButton
+					onPress={() => {
+						navigation.push("Info", { page: "CardInfo", card: card, image: card_image })
+					}}
+					icon="chevron-right"
+					size={36}
+					className="absolute opacity-30 w-8 h-32 self-end -bottom-1"
+				/>
+			</Surface>
+		</Animated.View>
 	) : null
 }

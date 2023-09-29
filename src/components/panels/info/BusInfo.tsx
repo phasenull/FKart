@@ -1,5 +1,6 @@
 import React, { Fragment } from "react"
 import { IconButton, Paragraph, Text, Title } from "react-native-paper"
+import { Translated } from "../../../util"
 
 export function BusInfo(props) {
 	const { navigation } = props
@@ -8,12 +9,12 @@ export function BusInfo(props) {
 	const route_no = bus_data?.displayRouteCode
 	React.useEffect(() => {
 		navigation.setOptions({
-			title: `${params?.title || params?.page || `Route-${route_no}`}`,
+			title: `${Translated("route")} - ${route_no}`,
 		})
 	}, [])
 	return (
 		<Fragment>
-			<Title className="text-sm">{`${bus_data.displayRouteCode} - ${bus_data.name} \n`}</Title>
+			<Title style={{color:`#${bus_data.routeColor || "fff"}`}}  className="text-sm self-center mx-6">{`${bus_data.displayRouteCode} - ${bus_data.name} \n`}</Title>
 			<IconButton
 				className="self-end m-3"
 				icon={"clock-time-eight-outline"}
