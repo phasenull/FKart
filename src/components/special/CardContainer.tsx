@@ -84,10 +84,10 @@ export function CardContainer(props) {
 						<Text className="inline text-center self-center mb-auto bottom-3 font-bold text-[20px]">"{card.description}"?</Text>
 						<Animated.Text
 							style={{
-								opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET * 0.95, DELETE_OFFSET * 1+0.01], outputRange: [1,0], extrapolate: `clamp` }),
+								opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET * 0.95, DELETE_OFFSET * 1+0.01], outputRange: [0.4,0], extrapolate: `clamp` }),
 								right: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2, DELETE_OFFSET], outputRange: ["0%", "85%"], extrapolate: `clamp` }),
 							}}
-							className="absolute text-[128px] -bottom-3 self-end"
+							className="absolute text-[128px] -bottom-3 self-end z-[-1]"
 						>
 							{"<"}
 						</Animated.Text>
