@@ -85,6 +85,7 @@ export default class User {
 		return data
 	}
 	public async DeleteFavorite({ favId, region_id }: { favId: string; region_id: string }) {
+		console.log("deleting", favId, region_id)
 		const url = `https://service.kentkart.com/rl1/api/v3.0/favorite?region=${region_id}&authType=4&favId=${favId}`
 		const request = await fetch(url, { headers: { Authorization: `Bearer ${this.token}` }, method: "delete" })
 		const data = await request.json()
@@ -96,7 +97,7 @@ export default class User {
 		}
 		const fallback_name = Date.now().toString(36) + Math.random().toString(36).substring(2)
 		const final_name = description || fallback_name
-		console.log("sending_data", final_name,type_data[type],favorite,region_id )
+		console.log("sending_data", final_name,type_data[type],favorite || "undefined card name",region_id )
 		const url = `https://service.kentkart.com/rl1/api/v3.0/favorite?region=${region_id}&authType=4&description=${final_name}&type=${type_data[type]}&favorite=${favorite}`
 		const request = await fetch(url, { headers: { Authorization: `Bearer ${this.token}` }, method: "post" })
 		const data = await request.json()

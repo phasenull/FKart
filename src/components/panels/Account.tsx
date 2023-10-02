@@ -21,6 +21,7 @@ export function PANEL_Account(props) {
 	})
 	const [locked,set_locked] = useState(false)
 	const items = useRef(null)
+	const [show_sensitive_data,set_show_sensitive_data] = useState(false)
 	const [loading, set_loading] = React.useState(false)
 	async function get() {
 		set_loading(true)
@@ -29,16 +30,16 @@ export function PANEL_Account(props) {
 		set_data({ ...data, ...user, region: region })
 		const favorites = await user.GetFavorites(region.id)
 		const favorites_list: Array<undefined> = favorites.userFavorites
-
+		
 		const card_list: Array<undefined> = favorites_list.filter((e: any) => e.typeDescription === "Card")
 		const oop_card_list = await Promise.all(
-			card_list.map(async (e: { favorite: string }) => {
+			card_list.map(async (e: { favorite: any }) => {
 				const card_data = await (await fetch_card(e)).json()
 				const new_card = Card.fromJSON({ ...card_data.cardlist[0], ...e })
 				return new_card
 			})
 		)
-
+		
 		if (favorites) {
 			set_data({
 				...data,
@@ -53,8 +54,13 @@ export function PANEL_Account(props) {
 		items.current = oop_card_list?.map((e: Card) => <CardContainer set_locked={set_locked} key={e.alias + Math.random().toString()} navigation={navigation} card={e} />)
 		set_loading(false)
 	}
+	async function get_settings() {
+		const setting_data = await FKart.GET_DATA("show_sensitive_information")
+		set_show_sensitive_data(setting_data)
+	}
 	React.useEffect(() => {
 		get()
+
 	}, [])
 	return (
 		<ScrollView
@@ -74,7 +80,7 @@ export function PANEL_Account(props) {
 				<Divider className="my-2" />
 				<Surface mode="flat" className="grid gap-3">
 					<Text variant="bodyMedium">{Translated("basic_info")}:</Text>
-					<TextInput disabled mode="flat" label={Translated("username")} value={data?.username || "???"}></TextInput>
+					<TextInput disabled mode="flat" label={Translated("username")} value={data?.username ? (show_sensitive_data && data?.username || "***") : "NOT LOGGED IN"}></TextInput>
 					{/* <TextInput disabled mode="flat" label={Translated("email")} value={data. || "???"}></TextInput> */}
 					{/* logout */}
 					<RegionChooser className="w-64 self-center" />

@@ -68,7 +68,7 @@ export function CardContainer(props) {
 				{
 					<Animated.View
 						{...pan_responder.panHandlers}
-						className={`absolute self-center h-32 w-80 z-[2] bg-["ff0000"] rounded-[16px]`}
+						className={`overflow-hidden absolute self-center h-32 w-80 z-[2] bg-["ff0000"] rounded-[16px]`}
 						style={{
 							opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2 - 0.01, DELETE_OFFSET / 2], outputRange: [0, 1], extrapolate: `clamp` }),
 							// 33FF71 - green
@@ -76,7 +76,12 @@ export function CardContainer(props) {
 								inputRange: [DELETE_OFFSET * 0.9, DELETE_OFFSET * 0.9 + 0.01],
 								outputRange: [`#ff0000`, `#ff0000`],
 								extrapolate: `clamp`,
-							}),
+							}), 
+							zIndex:swipe_size.interpolate({
+								inputRange: [DELETE_OFFSET / 2, DELETE_OFFSET / 2 + 0.01],
+								outputRange: [-1, 5],
+								extrapolate: `clamp`,
+							}), 
 							transform: [{ rotateY: "180deg" }],
 						}}
 					>
@@ -87,9 +92,10 @@ export function CardContainer(props) {
 								opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET * 0.95, DELETE_OFFSET * 1+0.01], outputRange: [0.4,0], extrapolate: `clamp` }),
 								right: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2, DELETE_OFFSET], outputRange: ["0%", "85%"], extrapolate: `clamp` }),
 							}}
-							className="absolute text-[128px] -bottom-3 self-end z-[-1]"
+							
+							className="absolute text-[128px] text-white translate-x-24 -bottom-3 z-[-1]"
 						>
-							{"<"}
+							{"<<<"}
 						</Animated.Text>
 					</Animated.View>
 				}

@@ -1,3 +1,5 @@
+import { FKart } from "./FKart"
+
 export default class Card {
 	public readonly alias: string
 	public readonly description?: string
@@ -72,10 +74,43 @@ export default class Card {
 		this.balance = balance
 		this.loads_in_line = loads_in_line
 	}
-
+	public async Rename({ new_description, alias }: { new_description: string; alias: string }) {
+		const user = await FKart.GetUser()
+		const region = await FKart.GET_DATA("region")
+		const delete_data = await user.DeleteFavorite({ favId: this.favorite_id, region_id: region.id })
+		const add_data = await user.AddFavorite({ region_id: region.id, type: "card", description: new_description, favorite: alias })
+	}
 	public static FETCH_CARD_DATA({ region, alias, token }: { region: string; alias: string; token: string }) {
 		const url = `https://service.kentkart.com/rl1/api/card/balance?region=${region}&lang=tr&authType=4&token=${token}&alias=${alias}`
 		return fetch(url)
+	}
+	public static async FETCH_CARD_DATA_FROM_FAVORITES({ region, token, alias }: { region: string; token: string; alias: string }) {
+		const user = await FKart.GetUser()
+		const response = await user.GetFavorites(region)
+		const data: Object[] = response.userFavorites.filter((x: any) => x.type === 2)
+		const card = data.find((x: any) => x.favorite === alias)
+		return card
+	}
+	public static async fromAlias({ region, alias, token }: { region: string; alias: string; token: string }) {
+		const response = await Card.FETCH_CARD_DATA({ region, alias, token })
+		const json = await response.json()
+		const response2 = await Card.FETCH_CARD_DATA_FROM_FAVORITES({ region, token, alias })
+		const card = Card.fromJSON({ ...response2, ...json?.cardlist[0] })
+		return card
+	}
+	public async GetTransactions({ month, year }: { month: number; year: number }) {
+		const regionobj = await FKart.GET_DATA("region")
+		const region = regionobj.id
+		const user = await FKart.GetUser()
+		const token = user.token
+		const stringified_month = month.toString().padStart(2, "0")
+		const stringified_year = year.toString()
+		const final_date = `${stringified_year}${stringified_month}`
+		console.log("final_date", final_date)
+		const url = `https://service.kentkart.com/rl1/api/card/transaction?region=${region}&authType=4&alias=${this.alias}&term=${final_date}`
+		const request = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+		const data = await request.json()
+		return data?.transactionList
 	}
 	public static fromJSON(json: any): Card {
 		const card = new Card({

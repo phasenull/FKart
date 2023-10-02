@@ -6,6 +6,7 @@ import { PANEL_Account } from "../components/panels/Account"
 import WebView from "react-native-webview"
 import RouteCodeSelector from "../components/panels/RouteCodeSelector"
 import { Translated } from "../util"
+import { PANEL_Map } from "../components/panels/Map"
 
 export function Home(props) {
 	const { navigation } = props
@@ -45,7 +46,7 @@ export function Home(props) {
 			)
 		},
 		map: () => {
-			return <Image source={{ uri: "https://reactnative.dev/img/tiny_logo.png" }} className="w-screen justify-center top-5" />
+			return <PANEL_Map navigation={navigation} />
 		},
 		account: () => {
 			return <PANEL_Account navigation={navigation} />
