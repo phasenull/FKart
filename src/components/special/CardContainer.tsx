@@ -1,4 +1,4 @@
-import { Badge, IconButton, Surface, Text } from "react-native-paper"
+import { Badge, IconButton, Surface, Text, TouchableRipple } from "react-native-paper"
 import React, { useEffect, useRef, useState } from "react"
 import Card from "../../network/Card"
 import { Image, Animated, View, PanResponder } from "react-native"
@@ -52,6 +52,8 @@ export function CardContainer(props) {
 		const response = await user.DeleteFavorite({ favId: fav_id, region_id: region.id })
 		console.log(response)
 	}
+	const show_details = () => navigation.push("Info", { page: "CardInfo", card: card, image: card_image })
+	const image_style_sheet = {}
 	const Clamp = (num, min, max) => Math.min(Math.max(num, min), max)
 	return show ? (
 		<Animated.View
@@ -64,70 +66,70 @@ export function CardContainer(props) {
 				],
 			}}
 		>
-			<Surface key={card.alias} mode="flat" className={"h-32 w-80 self-center mt-5 p-5 rounded-[16px]"}>
-				{
-					<Animated.View
-						{...pan_responder.panHandlers}
-						className={`overflow-hidden absolute self-center h-32 w-80 z-[2] bg-["ff0000"] rounded-[16px]`}
-						style={{
-							opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2 - 0.01, DELETE_OFFSET / 2], outputRange: [0, 1], extrapolate: `clamp` }),
-							// 33FF71 - green
-							backgroundColor: swipe_size.interpolate({
-								inputRange: [DELETE_OFFSET * 0.9, DELETE_OFFSET * 0.9 + 0.01],
-								outputRange: [`#ff0000`, `#ff0000`],
-								extrapolate: `clamp`,
-							}), 
-							zIndex:swipe_size.interpolate({
-								inputRange: [DELETE_OFFSET / 2, DELETE_OFFSET / 2 + 0.01],
-								outputRange: [-1, 5],
-								extrapolate: `clamp`,
-							}), 
-							transform: [{ rotateY: "180deg" }],
-						}}
-					>
-						<Text className="inline text-center self-center mt-auto mb-3 font-bold text-[32px]">{Translated("remove")}</Text>
-						<Text className="inline text-center self-center mb-auto bottom-3 font-bold text-[20px]">"{card.description}"?</Text>
-						<Animated.Text
+			<Surface key={card.alias} mode="flat" className={"h-32 w-80 self-center mt-5 rounded-[16px] overflow-hidden"}>
+				<TouchableRipple onPress={show_details} style={{ zIndex: 5, overflow: "visible" }} className={"h-full w-full self-center p-5"}>
+					<React.Fragment>
+						{
+							<Animated.View
+								{...pan_responder.panHandlers}
+								className={`overflow-hidden absolute self-center h-32 w-80 z-[2] bg-["ff0000"] rounded-[16px]`}
+								style={{
+									opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2 - 0.01, DELETE_OFFSET / 2], outputRange: [0, 1], extrapolate: `clamp` }),
+									// 33FF71 - green
+									backgroundColor: swipe_size.interpolate({
+										inputRange: [DELETE_OFFSET * 0.9, DELETE_OFFSET * 0.9 + 0.01],
+										outputRange: [`#ff0000`, `#ff0000`],
+										extrapolate: `clamp`,
+									}),
+									zIndex: swipe_size.interpolate({
+										inputRange: [DELETE_OFFSET / 2, DELETE_OFFSET / 2 + 0.01],
+										outputRange: [-1, 5],
+										extrapolate: `clamp`,
+									}),
+									transform: [{ rotateY: "180deg" }],
+								}}
+							>
+								<Text className="inline text-center self-center text-white mt-auto mb-3 font-bold text-[32px]">{Translated("remove")}</Text>
+								<Text className="inline text-center self-center mb-auto text-white bottom-3 font-bold text-[20px]">"{card.description}"?</Text>
+								<Animated.Text
+									style={{
+										opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET * 0.95, DELETE_OFFSET * 1 + 0.01], outputRange: [0.4, 0], extrapolate: `clamp` }),
+										right: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2, DELETE_OFFSET], outputRange: ["0%", "85%"], extrapolate: `clamp` }),
+									}}
+									className="absolute text-[128px] text-white translate-x-24 -bottom-3 z-[-1]"
+								>
+									{"<<<"}
+								</Animated.Text>
+							</Animated.View>
+						}
+						{/* IMAGES */}
+						<Animated.View
+							className="absolute self-start right-28 my-auto z-[3]"
 							style={{
-								opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET * 0.95, DELETE_OFFSET * 1+0.01], outputRange: [0.4,0], extrapolate: `clamp` }),
-								right: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2, DELETE_OFFSET], outputRange: ["0%", "85%"], extrapolate: `clamp` }),
+								opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2 - 0.01, DELETE_OFFSET / 2], outputRange: [1, 0], extrapolate: `clamp` }),
+								overflow: "visible"
 							}}
-							
-							className="absolute text-[128px] text-white translate-x-24 -bottom-3 z-[-1]"
 						>
-							{"<<<"}
-						</Animated.Text>
-					</Animated.View>
-				}
-				<Animated.View
-					className="absolute self-start right-28 my-auto z-[3]"
-					style={{
-						opacity: swipe_size.interpolate({ inputRange: [DELETE_OFFSET / 2 - 0.01, DELETE_OFFSET / 2], outputRange: [1, 0], extrapolate: `clamp` }),
-					}}
-				>
-					{card_image ? <Image className={"scale-[0.35] bottom-14 right-4 rotate-90"} source={card_image} /> : null}
-				</Animated.View>
-				{card.blacklist_status ? (
-					<View className="absolute self-start right-28 z-[4]">
-						{card_image ? <Image className={"scale-[0.35] botom-14 right-4 rotate-90 opacity-70"} style={{ tintColor: "black" }} source={card_image} /> : null}
-					</View>
-				) : null}
-				<View pointerEvents="none" className="pl-20 my-auto">
-					<Text className="self-start mt-5 bottom-3 text-lg">{card.description}</Text>
-					<Text className="self-start font-bold mb-5 text-[28px]">{card.balance} TL</Text>
-				</View>
-				{card.blacklist_status ? (
-					<Text className="absolute self-start text-red-600 rotate-[-15deg] font-bold text-[52px] self-center top-[40%]">Kara Liste</Text>
-				) : null}
-				{card.loads_in_line?.length ? <Badge className="absolute self-end -top-1 -right-1 scale-[1.25]">{card.loads_in_line?.length}</Badge> : null}
-				<IconButton
-					onPress={() => {
-						navigation.push("Info", { page: "CardInfo", card: card, image: card_image })
-					}}
-					icon="chevron-right"
-					size={36}
-					className="absolute opacity-30 w-8 h-32 self-end -bottom-1"
-				/>
+							{card_image ? <Image className={"absolute scale-[0.4] -top-14 -right-3 rotate-90"} source={card_image} /> : null}
+
+							{card.blacklist_status ? (
+								card_image ? (
+									<Image className={"absolute scale-[0.4] z-[4] -top-14 -right-3 rotate-90 opacity-70"} style={{ tintColor: "black" }} source={card_image} />
+								) : null
+							) : null}
+						</Animated.View>
+						{/* CARD DETAILS */}
+						<View pointerEvents="none" className="pl-20 my-auto">
+							<Text className="self-start mt-5 bottom-3 text-lg">{card.description}</Text>
+							<Text className="self-start font-bold mb-5 text-[28px]">{card.balance} TL</Text>
+						</View>
+						{card.blacklist_status ? (
+							<Text className="z-[4] absolute self-start text-red-600 rotate-[-10deg] font-bold text-[52px] self-center top-[30%]">Kara Liste</Text>
+						) : null}
+						{card.loads_in_line?.length ? <Badge className="absolute self-end -top-1 -right-1 scale-[1.25]">{card.loads_in_line?.length}</Badge> : null}
+						<IconButton icon="chevron-right" size={36} className="absolute opacity-30 w-8 h-32 self-end -bottom-1" />
+					</React.Fragment>
+				</TouchableRipple>
 			</Surface>
 		</Animated.View>
 	) : null

@@ -19,9 +19,9 @@ export function PANEL_Account(props) {
 		region: undefined,
 		cards: undefined,
 	})
-	const [locked,set_locked] = useState(false)
+	const [locked, set_locked] = useState(false)
 	const items = useRef(null)
-	const [show_sensitive_data,set_show_sensitive_data] = useState(false)
+	const [show_sensitive_data, set_show_sensitive_data] = useState(false)
 	const [loading, set_loading] = React.useState(false)
 	async function get() {
 		set_loading(true)
@@ -30,7 +30,7 @@ export function PANEL_Account(props) {
 		set_data({ ...data, ...user, region: region })
 		const favorites = await user.GetFavorites(region.id)
 		const favorites_list: Array<undefined> = favorites.userFavorites
-		
+
 		const card_list: Array<undefined> = favorites_list.filter((e: any) => e.typeDescription === "Card")
 		const oop_card_list = await Promise.all(
 			card_list.map(async (e: { favorite: any }) => {
@@ -39,7 +39,7 @@ export function PANEL_Account(props) {
 				return new_card
 			})
 		)
-		
+
 		if (favorites) {
 			set_data({
 				...data,
@@ -51,7 +51,9 @@ export function PANEL_Account(props) {
 		async function fetch_card(e: { favorite: string }) {
 			return Card.FETCH_CARD_DATA({ region: region.id, alias: e.favorite, token: user.token })
 		}
-		items.current = oop_card_list?.map((e: Card) => <CardContainer set_locked={set_locked} key={e.alias + Math.random().toString()} navigation={navigation} card={e} />)
+		items.current = oop_card_list?.map((e: Card) => (
+			<CardContainer set_locked={set_locked} key={e.alias + Math.random().toString()} navigation={navigation} card={e} />
+		))
 		set_loading(false)
 	}
 	async function get_settings() {
@@ -60,55 +62,55 @@ export function PANEL_Account(props) {
 	}
 	React.useEffect(() => {
 		get()
-
 	}, [])
+	
 	return (
-		<ScrollView
-			scrollEnabled={!locked}
-			refreshControl={<RefreshControl refreshing={false} onRefresh={get} />}
-			showsHorizontalScrollIndicator={false}
-			className="h-full grid"
-		>
-			{loading ? (
-				<LoadingIndicator />
-			) : (
-				items.current
-			)}
+			<ScrollView
+				scrollEnabled={!locked}
+				refreshControl={<RefreshControl refreshing={false} onRefresh={get} />}
+				showsHorizontalScrollIndicator={false}
+			>
+				{loading ? <LoadingIndicator /> : items.current}
 
-			<Surface mode="flat" className="w-80 my-16 mx-auto p-5 rounded-xl">
-				<Text variant="headlineMedium">{Translated("account")}</Text>
-				<Divider className="my-2" />
-				<Surface mode="flat" className="grid gap-3">
-					<Text variant="bodyMedium">{Translated("basic_info")}:</Text>
-					<TextInput disabled mode="flat" label={Translated("username")} value={data?.username ? (show_sensitive_data && data?.username || "***") : "NOT LOGGED IN"}></TextInput>
-					{/* <TextInput disabled mode="flat" label={Translated("email")} value={data. || "???"}></TextInput> */}
-					{/* logout */}
-					<RegionChooser className="w-64 self-center" />
-					<Button
-						mode="contained"
-						className="w-max self-center"
-						onPress={async () => {
-							navigation.replace("Auth", { lock_move: true })
-						}}
-					>
-						{Translated("go_to_title_screen")}
-					</Button>
+				<Surface mode="flat" className="w-80 my-16 mx-auto p-5 rounded-xl">
+					<Text variant="headlineMedium">{Translated("account")}</Text>
+					<Divider className="my-2" />
+					<Surface mode="flat" className="grid gap-3">
+						<Text variant="bodyMedium">{Translated("basic_info")}:</Text>
+						<TextInput
+							disabled
+							mode="flat"
+							label={Translated("username")}
+							value={data?.username ? (show_sensitive_data && data?.username) || "***" : "NOT LOGGED IN"}
+						></TextInput>
+						{/* <TextInput disabled mode="flat" label={Translated("email")} value={data. || "???"}></TextInput> */}
+						{/* logout */}
+						<RegionChooser className="w-64 self-center" />
+						<Button
+							mode="contained"
+							className="w-max self-center"
+							onPress={async () => {
+								navigation.replace("Auth", { lock_move: true })
+							}}
+						>
+							{Translated("go_to_title_screen")}
+						</Button>
 
-					<Button
-						mode="contained"
-						className="self-center"
-						labelStyle={{ color: "white" }}
-						buttonColor="red"
-						onPress={async () => {
-							console.log("LOGGING OUT")
-							await FKart.LogOut()
-							navigation.navigate("Auth")
-						}}
-					>
-						{Translated("logout")}
-					</Button>
+						<Button
+							mode="contained"
+							className="self-center"
+							labelStyle={{ color: "white" }}
+							buttonColor="red"
+							onPress={async () => {
+								console.log("LOGGING OUT")
+								await FKart.LogOut()
+								navigation.navigate("Auth")
+							}}
+						>
+							{Translated("logout")}
+						</Button>
+					</Surface>
 				</Surface>
-			</Surface>
-		</ScrollView>
+			</ScrollView>
 	)
 }

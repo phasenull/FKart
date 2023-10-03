@@ -10,10 +10,7 @@ import { AppRegistry } from "react-native"
 import React from "react"
 import Info from "./src/pages/Info"
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper"
-
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
+import {registerRootComponent} from 'expo';
 import { FKart } from "./src/network/FKart"
 import { useColorScheme } from "react-native"
 import { useMaterial3Theme } from "@pchmn/expo-material3-theme"
@@ -27,7 +24,7 @@ export default function App(props) {
 	)
 	FKart.__INIT__()
 	console.log(`App.js: Theme: ${colorScheme} ${paperTheme.colors.primary} `)
-	console.log(paperTheme.colors)
+	// console.log(paperTheme.colors)
 	return (
 		<PaperProvider theme={{...paperTheme}}>
 			<NavigationContainer theme={paperTheme}>
@@ -44,4 +41,5 @@ export default function App(props) {
 		</PaperProvider>
 	)
 }
-AppRegistry.registerComponent("main", () => App)
+registerRootComponent(App)
+// AppRegistry.registerComponent("main", () => App)

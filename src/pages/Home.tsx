@@ -8,6 +8,7 @@ import RouteCodeSelector from "../components/panels/RouteCodeSelector"
 import { Translated } from "../util"
 import { PANEL_Map } from "../components/panels/Map"
 
+import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context"
 export function Home(props) {
 	const { navigation } = props
 	const [loading, set_loading] = useState(false)
@@ -58,5 +59,8 @@ export function Home(props) {
 		{ key: "map", title: Translated("Map"), focusedIcon: "map" },
 		{ key: "account", title: Translated("Account"), focusedIcon: "account" },
 	]
-	return <BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} />
+	const insets = useSafeAreaInsets()
+	return (<SafeAreaProvider>
+		<BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} />
+	</SafeAreaProvider>)
 }

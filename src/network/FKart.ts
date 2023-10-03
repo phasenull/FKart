@@ -3,20 +3,30 @@ import createStorage from "typed-async-storage"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { DB_schema } from "./DB_schema"
 import User from "./User"
+import BaseTranslation from "../assets/lang/BaseTranslation"
 export abstract class FKart {
 	private static _instance: FKart
 	private static user: User
 	private static language = "en"
-	private static translations
+	private static translations: BaseTranslation
 	private static storage
 	private static region: string
 	private static __metadata__ = {
 		is_initialized: false,
 	}
-	public static READ_TRANSLATION_FILE() {
-		console.log("READING TRANSLATION FILE ")
-		const TRANSLATIONS = require(`./../assets/lang/translations.json`)
-		console.log(`[FKart/LOG]: \x1b[36mTranslation file (${TRANSLATIONS["language_locale"][FKart.language]}) read.\x1b[0m`)
+	private static __READ_TRANSLATION_FILE(language: string) {
+		if (!language) throw new Error("App Error: Didnt pass language to FKart.READ_TRANSLATION_FILE")
+		console.log(`[FKart/LOG]: Reading translation file (${language})...`)
+		let TRANSLATIONS: BaseTranslation
+		if (language == "en") {
+			TRANSLATIONS = require("../assets/lang/en.ts")
+		} else if (language == "tr") {
+			TRANSLATIONS = require("../assets/lang/tr.ts")
+		}
+		if (!TRANSLATIONS) {
+			new Error(`App Error: Invalid language (${language})`)
+		}
+		console.log(`[FKart/LOG]: \x1b[36mTranslation file (${TRANSLATIONS.language_locale}) read.\x1b[0m`)
 		return TRANSLATIONS
 	}
 	public static async GET_REGIONS() {
@@ -48,7 +58,11 @@ export abstract class FKart {
 		return FKart.translations
 	}
 	public static TRANSLATIONS_REFRESH() {
-		FKart.translations = FKart.READ_TRANSLATION_FILE()
+		FKart.translations = FKart.__READ_TRANSLATION_FILE(FKart.language)
+	}
+	public static TranslationFile(): BaseTranslation {
+		if (!FKart.translations) FKart.TRANSLATIONS_REFRESH()
+		return FKart.translations
 	}
 	public static GET_AVAILABLE_LANGUAGES() {
 		return [
@@ -75,9 +89,10 @@ export abstract class FKart {
 			case "language":
 				try {
 					if (!value) throw new Error(`App Error: Can't change settings for (${key}) because value is null (KentminKarti.language).`)
+					if (FKart.GET_AVAILABLE_LANGUAGES().find((x) => x.id == value) == undefined) throw new Error(`App Error: Invalid language (${value})`)
 					console.log(`[FKart/LOG]: Setting language to ${value}`)
 					FKart.language = value
-					FKart.translations = FKart.READ_TRANSLATION_FILE()
+					FKart.translations = FKart.__READ_TRANSLATION_FILE(value)
 					FKart.SET_DATA("language", value)
 					return true
 				} catch {

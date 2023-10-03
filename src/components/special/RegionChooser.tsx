@@ -11,6 +11,7 @@ export function RegionChooser(props) {
 		const data = await FKart.GET_DATA("region")
 		set_region(data)
 	}
+	const [language_file] = useState(FKart.TranslationFile())
 	useEffect(() => {
 		get_region()
 		FKart.GET_REGIONS().then((regions) => {
@@ -66,7 +67,7 @@ export function RegionChooser(props) {
 				</Modal>
 			</Portal>
 			<Button {...props} icon={"map-marker"} className="mb-1" mode="contained-tonal" onPress={() => set_modal({ visible: true, region: undefined })}>
-				{region?.id ? `${Translated("selected_region").split("/*")[0]} ${region?.name}` : "Select Region"}
+				{region?.id ? `${language_file.selected_region({region:region.name})}` : language_file.select_region}
 			</Button>
 		</Fragment>
 	)

@@ -42,13 +42,13 @@ export function Translated(key: string, language?: String) {
 
 	let TRANSLATIONS
 
-	TRANSLATIONS = FKart.TRANSLATIONS_GET()
+	TRANSLATIONS = FKart.TranslationFile()
 	// console.log("util.tsx:",TRANSLATIONS["language_locale_code"])
-	if (!TRANSLATIONS) throw new Error(`Translation file not found (${language})`)
+	if (!TRANSLATIONS) throw new Error(`[Util/ERROR]: Translation file not found (${language})`)
 	// console.log(`[KentiminKarti/LOG]: Translation of (${key}) is (${TRANSLATIONS[key]}) in language ${language}`)
-	return TRANSLATIONS[key]?TRANSLATIONS[key][language] : `unknown_key::${key}::${language}`
+	return TRANSLATIONS[key]?TRANSLATIONS[key] : `unknown_key::${key}::${language}`
 }
-console.log(`Setting language to ${Translated("language_locale")}`)
+console.log(`[Util/LOG]: Setting language to ${Translated("language_locale")}`)
 
 export async function LOGIN_AS_INCOGNITO() {
 	return await FKart.LOGIN_AS_INCOGNITO()
