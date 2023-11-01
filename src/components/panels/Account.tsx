@@ -31,7 +31,11 @@ export function PANEL_Account(props) {
 		const favorites = await user.GetFavorites(region.id)
 		const favorites_list: Array<undefined> = favorites.userFavorites
 
-		const card_list: Array<undefined> = favorites_list.filter((e: any) => e.typeDescription === "Card")
+		const card_list: Array<undefined> = favorites_list?.filter((e: any) => e.typeDescription === "Card")
+		if (!card_list) {
+			set_loading(false)
+			return
+		};
 		const oop_card_list = await Promise.all(
 			card_list.map(async (e: { favorite: any }) => {
 				const card_data = await (await fetch_card(e)).json()

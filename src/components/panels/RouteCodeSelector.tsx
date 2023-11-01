@@ -4,7 +4,7 @@ import { IconButton, List, Searchbar, Surface, Text } from "react-native-paper"
 import { FKart } from "../../network/FKart"
 import { LoadingIndicator } from "./LoadingIndicator"
 import { Retry } from "./Retry"
-export default function RouteCodeSelector(props) {
+function RouteCodeSelectorFunc(props) {
 	const [data, setData] = React.useState({
 		bus_list: [],
 		selected_bus: null,
@@ -79,3 +79,4 @@ export default function RouteCodeSelector(props) {
 		</React.Fragment>
 	)
 }
+export const RouteCodeSelector = React.memo(RouteCodeSelectorFunc,()=>true)
