@@ -4,7 +4,7 @@ import React, { useState, Fragment, useEffect } from "react"
 import { BottomNavigation, Portal, Surface, Text } from "react-native-paper"
 import { PANEL_Account } from "../components/panels/Account"
 import WebView from "react-native-webview"
-import RouteCodeSelector from "../components/panels/RouteCodeSelector"
+import {RouteCodeSelector} from "../components/panels/RouteCodeSelector"
 import { Translated } from "../util"
 import { PANEL_Map } from "../components/panels/Map"
 
@@ -27,8 +27,8 @@ function HomeFunc(props) {
 	useEffect(() => {
 		get()
 	}, [])
-	const renderScene = React.useMemo(
-		()=>BottomNavigation.SceneMap({
+	const renderScene = React.useRef(
+		BottomNavigation.SceneMap({
 			routes: () => {
 				return <RouteCodeSelector navigation={navigation} />
 			},
@@ -53,8 +53,7 @@ function HomeFunc(props) {
 			account: () => {
 				return <PANEL_Account navigation={navigation} />
 			},
-		}),
-		[]
+		})
 	)
 	const routes = [
 		{ key: "routes", title: Translated("routes"), focusedIcon: "bus" },
@@ -65,7 +64,7 @@ function HomeFunc(props) {
 	const insets = useSafeAreaInsets()
 	return (
 		<SafeAreaProvider>
-			<BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} />
+			<BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene.current} />
 		</SafeAreaProvider>
 	)
 }
