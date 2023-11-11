@@ -3,7 +3,7 @@ import { Button, Dialog, List, Portal, Surface, Text, TextInput } from "react-na
 import { FKart } from "../network/FKart"
 import { Translated } from "../util"
 import React from "react"
-import { LoadingIndicator } from "../components/panels/LoadingIndıcator"
+import { LoadingIndicator } from "../components/panels/LoadingIndicator"
 interface DialogState {
 	visible: boolean
 	title?: string
@@ -32,10 +32,16 @@ export function DevPanel(props) {
 		}
 		getData()
 	}, [])
+	const {updateTheme} = props
+	const data_card = FKart.GET_DATA("testing")
+	const [inputs, set_inputs] = useState({
+		card_no: data.card_no,
+		description: "",
+	})
 	async function getBalance() {
 		{
 			set_loading(true)
-			const alias = remove_dashes_from_string(inputs.card_no)
+			const alias = inputs?.card_no?.replaceAll("-","") || ""
 			console.log("alias", alias, inputs.card_no)
 			// public api key
 			//todo: change this to a private api key
@@ -117,10 +123,15 @@ export function DevPanel(props) {
 				actions: [
 					{
 						clicked: async () => {
-							await FKart.SET_DATA("testing", { card_no: alias })
+							const user = await FKart.GetUser()
+							const region = await FKart.GET_DATA("region")
+							const response = await user.AddFavorite({
+favorite: alias, type:"card",region_id:region.id,description:inputs.description,
+							})
+							console.log(response)
 						},
-						icon: "content-save",
-						text: "Save Card No",
+						icon: "star",
+						text: "Favorite",
 					},
 					{
 						clicked: async () => {
@@ -140,15 +151,6 @@ export function DevPanel(props) {
 				icon: null,
 			})
 		}
-	}
-	const data_card = FKart.GET_DATA("testing")
-	const [inputs, set_inputs] = useState({
-		card_no: data.card_no,
-	})
-	function remove_dashes_from_string(string:string) {
-		if (!string || string==undefined || string==null) return ""
-		string.replace("-", "")
-		return string
 	}
 	return (
 		<Surface className="h-full">
@@ -191,8 +193,8 @@ export function DevPanel(props) {
 							title="Fetch Balance"
 							className="pl-10"
 							left={(props) => <List.Icon icon="credit-card-outline" />}
-							onPress={async () => {
-								await getBalance()
+							onPress={() => {
+								getBalance()
 							}}
 						/>
 						<TextInput
@@ -211,9 +213,28 @@ export function DevPanel(props) {
 									}}
 								/>
 							}
-							onChangeText={async (text) => {
+							onChangeText={(text) => {
 								set_inputs({ ...inputs, card_no: text })
 							}}
+						/>
+						<TextInput
+							defaultValue={data.card_no}
+							placeholder="My Card"
+							value={inputs.description}
+							maxLength={30}
+							label={"Card Name"}
+							className="pl-10"
+							onChangeText={(text) => {
+								set_inputs({ ...inputs, description: text })
+							}}
+						/>
+						<List.Item
+							title="Change Theme"
+							className="pl-10"
+							left={(props) => <List.Icon icon="credit-card-outline" />}
+							onPress={
+								()=>{updateTheme(`#${Math.floor(Math.random()*16777215).toString(16)}`)}
+							}
 						/>
 					</List.Accordion>
 					<List.Accordion title="AppData" left={(props) => <List.Icon className="pl-5" icon="database" />}>

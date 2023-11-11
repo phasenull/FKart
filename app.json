@@ -1,15 +1,25 @@
 {
-  "expo": {
-    "name": "FKart",
-    "slug": "FKart",
-    "userInterfaceStyle": "automatic",
-    "version": "23.9.21",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "android": {
-      "package": "dev.phasenull.fkart"
-    }
-  },
-  "name": "FKart"
+	"expo": {
+		"name": "FKart",
+		"slug": "FKart",
+		"splash": {
+			"image": "src/assets/media/icon.png",
+			"resizeMode": "contain"
+		},
+		"userInterfaceStyle": "automatic",
+		"version": "23.9.21",
+		"assetBundlePatterns": ["**/*"],
+		"android": {
+			"package": "dev.phasenull.fkart"
+		},
+		"plugins": [
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "The app accesses your photos to let you share them with your friends."
+				}
+			]
+		]
+	},
+	"name": "FKart"
 }

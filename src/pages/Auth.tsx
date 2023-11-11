@@ -55,7 +55,7 @@ export function AuthPage(props) {
 				<Panel_Auth page_type={page} move_to_page={move_to_page} navigation={navigation} />
 				<Button
 					className="w-max absolute -bottom-20 h-max self-center"
-					mode="elevated"
+					mode="contained-tonal"
 					onPress={() => {
 						if (page == "Log In") {
 							set_page("Sign Up")
@@ -64,11 +64,7 @@ export function AuthPage(props) {
 						}
 					}}
 				>
-					{page == "Log In" ? Translated("signup_instead").split("/*")[0] : Translated("login_instead").split("/*")[0]}
-					<Text className="text-blue-400">
-						{page == "Log In" ? Translated(Translated("signup_instead").split("/*")[1]) : Translated(Translated("login_instead").split("/*")[1])}
-					</Text>
-					{page == "Log In" ? Translated("signup_instead").split("/*")[2] : Translated("login_instead").split("/*")[2]}
+					{page == "Log In" ? FKart.TranslationFile().signup_instead : FKart.TranslationFile().login_instead}
 				</Button>
 			</Card>
 			{/* 

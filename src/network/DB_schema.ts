@@ -22,5 +22,6 @@ export const DB_schema = {
 		anonymous: PropTypes.bool,
 		token: PropTypes.string,
 	}),
+	show_sensitive_information: PropTypes.bool,
 
 }

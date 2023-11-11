@@ -1,8 +1,22 @@
 import React, { useEffect } from "react"
-import { ScrollView, View } from "react-native"
-import { Button, Chip, Dialog, Divider, IconButton, List, Portal, ProgressBar, SegmentedButtons, Surface, Text, Title } from "react-native-paper"
+import { ScrollView, View, FlatList } from "react-native"
+import {
+	Button,
+	Chip,
+	Dialog,
+	Divider,
+	IconButton,
+	List,
+	Portal,
+	ProgressBar,
+	SegmentedButtons,
+	Surface,
+	Text,
+	Title,
+	TouchableRipple,
+} from "react-native-paper"
 import { Translated } from "../../../util"
-import { LoadingIndicator } from "../LoadingIndıcator"
+import { LoadingIndicator } from "../LoadingIndicator"
 import { Retry } from "../Retry"
 
 export function TimeTable(props) {
@@ -38,6 +52,9 @@ export function TimeTable(props) {
 		get()
 	}, [direction])
 	useEffect(() => {
+		navigation.setOptions({
+			title: `${Translated("route")} - ${route_no}`,
+		})
 		get_today_type()
 	}, [])
 
@@ -80,70 +97,78 @@ export function TimeTable(props) {
 					</Dialog.Actions>
 				</Dialog>
 			</Portal>
-			<Title className="font-bold text-lg">{data ? data.headSign : "Loading..."}</Title>
-			<SegmentedButtons
-				className="mx-10 inline-block"
-				value={parameters.work_days}
-				onValueChange={(value) => {set_parameters({ ...parameters, work_days: value })}}
-				buttons={[
-					{
-						value: "MTWTFss",
-						label: "Weekdays",
-					},
-					{
-						value: "mtwtfSs",
-						label: "Saturday",
-					},
-					{
-						value: "mtwtfsS",
-						label: "Sunday",
-					},
-				]}
-			/>
-			<IconButton
-				onPress={() => {
-					set_direction(!direction)
-				}}
-				className="inline-block self-end m-3"
-				icon="arrow-left-right"
-				mode="contained"
-			/>
-			<ScrollView showsHorizontalScrollIndicator={false}>
-				{loading ? (
-					<LoadingIndicator />
-				) : (
-					data?.scheduleList
-						?.find((a) => a.description === parameters.work_days)
-						?.timeList.map((e) => (
-							<React.Fragment>
-								<View key={e.departureTime}>
-									{e.tripHeadSign !== "" ? (
+			<Title className="font-bold text-lg self-center my-4">{data ? data.headSign : "Loading..."}</Title>
+			<View className="h-16 py-auto">
+				<SegmentedButtons
+					className="absolute my-auto mr-12 ml-4"
+					value={parameters.work_days}
+					onValueChange={(value) => {
+						set_parameters({ ...parameters, work_days: value })
+					}}
+					buttons={[
+						{
+							value: "MTWTFss",
+							label: "Weekdays",
+						},
+						{
+							value: "mtwtfSs",
+							label: "Saturday",
+						},
+						{
+							value: "mtwtfsS",
+							label: "Sunday",
+						},
+					]}
+				/>
+				<IconButton
+					onPress={() => {
+						set_direction(!direction)
+					}}
+					className="absolute my-auto mr-4 self-end"
+					icon="arrow-left-right"
+					mode="contained"
+				/>
+			</View>
+			{loading ? (
+				<LoadingIndicator />
+			) : (
+				<FlatList
+					data={data?.scheduleList?.find((a) => a.description === parameters.work_days)?.timeList}
+					showsHorizontalScrollIndicator={false}
+					renderItem={({ item }) => {
+						return (
+							<React.Fragment key={`${item.departureTime}-${Math.random()}`}>
+								<View key={`${item.departureTime}-${Math.random()}`}>
+									<TouchableRipple className="w-full text-left mr-12 h-10 self-start" onPress={() => {}}>
+										<Text className="font-bold text-xl self-center my-auto" style={{color:`#${item.patternColor || 'fff'}`}}>{item.departureTime || "INVALID TIME"}</Text>
+									</TouchableRipple>
+									{item.tripHeadSign !== "" ? (
 										<IconButton
-											className="right-0"
+											className="absolute my-auto -bottom-[4px] self-end"
 											icon={"information-outline"}
 											onPress={() => {
-												if (e.tripHeadSign !== "") {
-													set_route_info(e.tripHeadSign)
+												console.log(item)
+												if (item.tripHeadSign !== "") {
+													set_route_info(item.tripHeadSign)
 												}
 											}}
 										></IconButton>
 									) : null}
-									<Button className="w-48 h-max" onPress={() => {}}>
-										{e.departureTime || "INVALID TIME"}
-									</Button>
 								</View>
-								<Divider key={`divider-${e.departureTime}`} />
+								<Divider key={`divider-${item.departureTime}-${Math.random()}`} className="z-[5]" />
 							</React.Fragment>
-						)) || (
-						<Retry
-							error={"Server responded with invalid data"}
-							onPress={() => {
-								get()
-							}}
-						/>
+						)
+					}}
+				>
+					<Retry
+						error={"Server responded with invalid data"}
+						onPress={() => {
+							get()
+						}}
+					/>
 					)
-				)}
-			</ScrollView>
+				</FlatList>
+			)}
 		</Surface>
 	)
 }
