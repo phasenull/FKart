@@ -74,6 +74,7 @@ export function PANEL_Account(props) {
 				refreshControl={<RefreshControl refreshing={false} onRefresh={get} />}
 				showsHorizontalScrollIndicator={false}
 			>
+				<Text className={"text-center text-4xl font-bold py-5 -mb-5"}>Favorilerim</Text>
 				{loading ? <LoadingIndicator /> : items.current}
 
 				<Surface mode="flat" className="w-80 my-16 mx-auto p-5 rounded-xl">

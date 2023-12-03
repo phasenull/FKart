@@ -38,4 +38,5 @@ export default interface BaseTranslation {
 	route: string,
 	select_region: string,
 	showing_of({showing,total}:{showing?:number,total:number}):string,
+	no_usage_this_month: string,
 }

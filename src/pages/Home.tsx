@@ -1,15 +1,15 @@
-import { Image } from "react-native"
+import { Dimensions, Image, KeyboardAvoidingView, SafeAreaView, StatusBar, View } from "react-native"
 import { FKart } from "../network/FKart"
 import React, { useState, Fragment, useEffect } from "react"
 import { BottomNavigation, Portal, Surface, Text } from "react-native-paper"
 import { PANEL_Account } from "../components/panels/Account"
 import WebView from "react-native-webview"
-import {RouteCodeSelector} from "../components/panels/RouteCodeSelector"
+import { RouteCodeSelector } from "../components/panels/RouteCodeSelector"
 import { Translated } from "../util"
 import { PANEL_Map } from "../components/panels/Map"
 
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context"
-function HomeFunc(props) {
+export default function Home(props) {
 	const { navigation } = props
 	const [loading, set_loading] = useState(false)
 	const [user, set_user] = useState(undefined)
@@ -63,9 +63,9 @@ function HomeFunc(props) {
 	]
 	const insets = useSafeAreaInsets()
 	return (
-		<SafeAreaProvider>
+		<Fragment>
+			<StatusBar translucent={false} animated={true} />
 			<BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene.current} />
-		</SafeAreaProvider>
+		</Fragment>
 	)
 }
-export const Home = HomeFunc
