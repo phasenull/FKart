@@ -1,16 +1,15 @@
-import { NavigationContainer , DefaultTheme } from "@react-navigation/native"
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 const Stack = createNativeStackNavigator()
 import { AuthPage } from "./src/pages/Auth"
-import { Home } from "./src/pages/Home"
+import Home from "./src/pages/Home"
 import { DevPanel } from "./src/pages/DevPanel"
 import { AppSettings } from "./src/pages/AppSettings"
-import { AppRegistry } from "react-native"
+import { AppRegistry, SafeAreaView } from "react-native"
 
 import React from "react"
 import Info from "./src/pages/Info"
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper"
-import {registerRootComponent} from 'expo';
 import { FKart } from "./src/network/FKart"
 import { useColorScheme } from "react-native"
 import { useMaterial3Theme } from "@pchmn/expo-material3-theme"
@@ -26,20 +25,19 @@ export default function App(props) {
 	console.log(`App.js: Theme: ${colorScheme} ${paperTheme.colors.primary} `)
 	// console.log(paperTheme.colors)
 	return (
-		<PaperProvider theme={{...paperTheme}}>
-			<NavigationContainer theme={paperTheme}>
-				<Stack.Navigator initialRouteName="Home">
-					<Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
-					<Stack.Screen name="Auth" component={AuthPage} options={{ headerShown: false }} />
-					<Stack.Screen name="DevPanel" options={{ headerShown: false }}>
-						{() => <DevPanel updateTheme={updateTheme} />}
-					</Stack.Screen>
-					<Stack.Screen name="AppSettings" component={AppSettings} options={{ headerShown: false }} />
-					<Stack.Screen name="Info" component={Info} options={{ headerShown: true }} />
-				</Stack.Navigator>
-			</NavigationContainer>
-		</PaperProvider>
+			<PaperProvider theme={{ ...paperTheme }}>
+				<NavigationContainer theme={paperTheme}>
+					<Stack.Navigator initialRouteName="Home">
+						<Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+						<Stack.Screen name="Auth" component={AuthPage} options={{ headerShown: false }} />
+						<Stack.Screen name="DevPanel" options={{ headerShown: false }}>
+							{() => <DevPanel updateTheme={updateTheme} />}
+						</Stack.Screen>
+						<Stack.Screen name="AppSettings" component={AppSettings} options={{ headerShown: false }} />
+						<Stack.Screen name="Info" component={Info} options={{ headerShown: true }} />
+					</Stack.Navigator>
+				</NavigationContainer>
+			</PaperProvider>
 	)
 }
-registerRootComponent(App)
-// AppRegistry.registerComponent("main", () => App)
+AppRegistry.registerComponent("main", () => App)

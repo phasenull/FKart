@@ -15,7 +15,6 @@ export function CardInfo(props) {
 	const image = params?.image
 	const { navigation } = props
 	const [data, set_data] = React.useState(card)
-	const [transactions, set_transactions] = React.useState([])
 	const divider = <Divider className="my-5 self-center w-80" />
 	const [refresh_controller, set_refresh_controller] = React.useState(false)
 	const [form_visible, set_form_visible] = React.useState(false)
@@ -25,11 +24,7 @@ export function CardInfo(props) {
 		const user = await FKart.GetUser()
 		const region = await FKart.GET_DATA("region")
 		const card_data = await Card.fromAlias({ region: region.id, alias: card.alias, token: user.token })
-		const this_year = new Date().getFullYear()
-		const this_month = new Date().getMonth()
-		const transaction_list = await card_data.GetTransactions({ year: this_year, month: this_month })
 		set_data(card_data)
-		set_transactions(transaction_list)
 		set_refresh_controller(false)
 	}
 	React.useEffect(() => {
@@ -105,7 +100,7 @@ export function CardInfo(props) {
 					</View>
 					{divider}
 					{/* usagse */}
-					<View key={"usages"} className="self-center gap-y-1">
+					{/* <View key={"usages"} className="self-center gap-y-1">
 						<View className="gap-x-3">
 							<Text className="text-[18px]">Son Yükleme: {data.last_usages[1].amt} TL</Text>
 							<Text className="text-[12px] self-center opacity-50">{data.last_usages[1].date}</Text>
@@ -114,9 +109,9 @@ export function CardInfo(props) {
 							<Text className="text-[18px]">Son Kullanım: {data.last_usages[0].amt} TL</Text>
 							<Text className="text-[12px] self-center opacity-50">{data.last_usages[0].date}</Text>
 						</View>
-					</View>
+					</View> */}
 					{/* horizontal */}
-					<CardInfoHorizontalView transactions={transactions} data={data} get={get} />
+					<CardInfoHorizontalView data={data} get={get} />
 				</React.Fragment>
 			)}
 		</ScrollView>

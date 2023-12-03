@@ -41,5 +41,6 @@ module.exports = <BaseTranslation> {
 	select_region: "Select Region",
 	showing_of({ showing, total }: { showing?: number, total: number }) {
 		return `Showing ${showing || 0} out of ${total || 0}`;
-	}
+	},
+	no_usage_this_month: "No usage data found",
 }

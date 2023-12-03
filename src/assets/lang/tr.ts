@@ -42,4 +42,5 @@ module.exports = <BaseTranslation> {
 	showing_of({ showing, total }) {
 		return `${total || 0} veri içinden ${showing || 0} tane gösteriliyor`;
 	},
+	no_usage_this_month: "Kullanım bulunamadı",
 }
